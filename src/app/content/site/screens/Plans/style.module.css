@@ -1,0 +1,7 @@
+.divInfos:nth-child(even) {
+  border: 1px solid #2A7EF3;
+}
+
+.divInfos:nth-child(odd) {
+  border: 1px solid #EA760A;
+}

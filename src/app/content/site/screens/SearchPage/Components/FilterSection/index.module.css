@@ -1,0 +1,42 @@
+.selects {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #041F60;;
+  border-radius: 5px;
+  width: 170px;
+  font-size: .7rem;
+  text-transform: capitalize;
+  background-color: #d9d9d9;
+}
+.selectsNone{
+  display: none;
+}
+
+
+.inputRadio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    background: transparent;
+    box-shadow: 0 0 0 1px #041F60;
+    border-radius: 1px;
+}
+
+
+.inputRadio:checked {
+  background-color: #041F60;;
+}
+
+.inputRadioNotChecked{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  background: transparent;
+  box-shadow: 0 0 0 1px #041F60;;
+  border-radius: 1px;
+}
+

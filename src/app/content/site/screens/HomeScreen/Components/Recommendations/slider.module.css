@@ -1,0 +1,11 @@
+.custom_slider .slick-dots li button {
+  background-color: #ff0000; /* Defina a cor desejada */
+  width: 12px; /* Defina a largura desejada */
+  height: 12px; /* Defina a altura desejada */
+  border-radius: 50%;
+  border: none;
+}
+
+.custom_slider .slick-dots li.slick-active button {
+  background-color: #00ff00; /* Defina a cor desejada para o dot ativo */
+}
