@@ -62,7 +62,7 @@ export default function ModalBudgetCliente({ isOpen, onClose }) {
     try{
       BuffetService.createUser(buffetData)
       .then(res => {
-        console.log(res)
+     
         res?.messages?.errors ? setErrors( res?.messages?.errors): ''
         if(res.result.status){
           setDataUser(res)

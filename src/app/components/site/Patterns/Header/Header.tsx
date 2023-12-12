@@ -78,6 +78,8 @@ export default function Header(){
 
 
 
+
+
   
   return(
     !isMobile ? 
@@ -145,17 +147,17 @@ export default function Header(){
           marginRight: (size < 1200) ? '' : '0rem'
         }}
       >
-        {dataUser?.['entidade']?.nome == null || dataBuffet?.length == 0 &&
+        {dataUser?.['entidade']?.nome == null &&
            <button onClick={() => router.push('/login')} style={{color: 'black', paddingRight: '1rem', textDecoration: 'underline'}}><Text>Acesse o buffet</Text></button>
         }
-        {dataUser?.['entidade']?.nome == null || dataBuffet?.length == 0?
+        {dataUser?.['entidade']?.nome == null &&
   
-        <Button variant="contained" colorVariant="secondary" size="lg" onClick={() => router.push('/login')}>Anuncie seu Buffet</Button> : ''
+        <Button variant="contained" colorVariant="secondary" size="lg" onClick={() => router.push('/login')}>Anuncie seu Buffet</Button>
         }
 
 
         
-        {dataUser?.['entidade']?.nome && dataBuffet?.length > 0? 
+        {dataUser?.['entidade']?.nome ? 
         <Box>
 
           <Box styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', cursor: 'pointer'}}  

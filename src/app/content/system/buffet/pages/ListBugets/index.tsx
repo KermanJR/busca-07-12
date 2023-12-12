@@ -118,7 +118,8 @@ const ListBudgets = () =>{
           </TableHead>
 
           <TableBody>
-            {orcamentos.slice(viewElements, viewElements + 20).map((item, index)=>(
+            {orcamentos?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row'}}>
                 <TableCell>{item?.['id']}</TableCell>
                 <TableCell>{item?.['evento']?.['nome']}</TableCell>

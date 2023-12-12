@@ -122,7 +122,8 @@ const Homedash = () =>{
           </TableHead>
 
           <TableBody>
-            {propostas?.slice(viewElements, viewElements + 20).map((item, index)=>(
+            {propostas?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', flexWrap: 'no-wrap'}}>
                 <TableCell>{item?.['id']}</TableCell>
                 <TableCell>{item?.entidade?.['nome']}</TableCell>

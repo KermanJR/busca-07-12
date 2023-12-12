@@ -10,7 +10,7 @@ import theme from "@src/app/theme/theme";
 import { useState } from "react";
 
 const ModalDashboardEditCupons = ({isModalOpenEditCupom, setIsModalOpenEditCupom, cupons, setCupons, index, id}) =>{
-  console.log(index)
+
   const [code, setCode] = useState(cupons[index].codigo ?? '')
   const [price, setPrice] = useState(cupons[index].valor ?? '')
   const [percentage, setPercentage] = useState(cupons[index].porcentagem ?? '')

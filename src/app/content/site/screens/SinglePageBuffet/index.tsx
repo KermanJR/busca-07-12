@@ -52,7 +52,7 @@ export default function SinglePageBuffet(){
     const [buffets, setBuffets] = useState([])
 
   
-   
+  
 
     const closeMapModal = () => {
       setIsMapModalOpen(false);

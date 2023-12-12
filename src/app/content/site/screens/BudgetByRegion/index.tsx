@@ -48,7 +48,8 @@ export default function BudgetByRegion(){
   const {
     dataBuffet,
     dataUser,
-    setDataUser
+    setDataUser,
+    idBuffet
   } = useContext(UserContext)
 
      //Dados de configurações
@@ -62,8 +63,6 @@ export default function BudgetByRegion(){
 
       const [isLoading, setIsLoading] = useState(false);
   
-
-    
 
     //Dados de endereços
     const [cities, setCities] = useState([]);
@@ -132,6 +131,21 @@ export default function BudgetByRegion(){
         label: 'Confraternização'
       }
     ]
+
+
+    
+      const [selectedCategories, setSelectedCategories] = useState<any>([]);
+      const handleCategoryChange = (categoryValue) => {
+        if (selectedCategories.includes(categoryValue)) {
+          setSelectedCategories(selectedCategories.filter((c) => c !== categoryValue));
+        } else {
+          setSelectedCategories([...selectedCategories, categoryValue]);
+        }
+      };
+   
+  
+ 
+
 
     const handleStateChange = async (selectedOption?) => {
       setSelectedStateId(selectedOption);
@@ -330,8 +344,6 @@ export default function BudgetByRegion(){
             idsCidadesIguais.unshift(dataUser['entidade']?.id);
           }
 
-       
-
           setCidadesIguais(idsCidadesIguais)
 
       
@@ -346,29 +358,51 @@ export default function BudgetByRegion(){
     setIsLoading(true)
       e.preventDefault()
       if(dataUser['usuario']?.id_perfil == 3){
-        if(cidadesIguais.length > 1){
-            cidadesIguais.map((item, index)=>{
-            let data = {
-              "nome": nome,
-              "observacoes": observacoes,
-              "qtd_pessoas": Number(qtdPessoas),
-              "tipo": tipo,
-              "status": String(cidadesIguais[0]),
-              "id_entidade": item,
-              "periodo": periodo,
-              "id_cidade": Number(idCidade),
-              "bairro": bairro,
-              "data_do_evento": `${dataDoEvento} 00:00:00`
-            }
-            BuffetService.sendEvento(data)
-            .then(async res=>{
-              setShowConfirmationModal(true);
-            }).catch(err=>{
-              console.log(err)
+        if(idBuffet == null){
+          if(cidadesIguais.length > 1){
+              cidadesIguais.map((item, index)=>{
+              let data = {
+                "nome": nome,
+                "observacoes": observacoes,
+                "qtd_pessoas": Number(qtdPessoas),
+                "tipo": selectedCategories.map((item)=>item).join(', '),
+                "status": String(cidadesIguais[0]),
+                "id_entidade": item,
+                "periodo": periodo,
+                "id_cidade": Number(idCidade),
+                "bairro": bairro,
+                "data_do_evento": `${dataDoEvento} 00:00:00`
+              }
+              BuffetService.sendEvento(data)
+              .then(async res=>{
+                setShowConfirmationModal(true);
+              }).catch(err=>{
+                console.log(err)
+              })
             })
+          }else{
+            setShowNegationModal(true)
+          }
+        }
+        else{
+          let data = {
+            "nome": nome,
+            "observacoes": observacoes,
+            "qtd_pessoas": Number(qtdPessoas),
+            "tipo": selectedCategories.map((item, index)=>item)[0],
+            "status": String(dataUser?.['entidade']?.id),
+            "id_entidade": idBuffet,
+            "periodo": periodo,
+            "id_cidade": Number(idCidade),
+            "bairro": bairro,
+            "data_do_evento": `${dataDoEvento} 00:00:00`
+          }
+          BuffetService.sendEvento(data)
+          .then(async res=>{
+            setShowConfirmationModal(true);
+          }).catch(err=>{
+            console.log(err)
           })
-        }else{
-          setShowNegationModal(true)
         }
         
       }else{
@@ -458,24 +492,10 @@ export default function BudgetByRegion(){
   
     ]
 
-    
-  const {
-    setSelectedCategory,
-    selectedCategory,
-    setSelectedCity,
-    selectedCity
-  } = useContext(UserContext);
-  
-    const [selectedCategories, setSelectedCategories] = useState<any>([]);
-    const handleCategoryChange = (categoryValue) => {
-      if (selectedCategories.includes(categoryValue)) {
-        setSelectedCategories(selectedCategories.filter((c) => c !== categoryValue));
-      } else {
-        setSelectedCategories([...selectedCategories, categoryValue]);
-      }
-    };
- 
 
+    console.log(dataBuffet)
+    
+  
   
     return(
         <Box tag="main"
@@ -585,6 +605,7 @@ export default function BudgetByRegion(){
                     loading={loadingState}
                     value={states.find((state) => state.value === selectedStateId)}   
                     options={states} 
+            
                     styleSheet={{
                         padding: '.5rem',
                         borderRadius: '5px',
@@ -626,20 +647,20 @@ export default function BudgetByRegion(){
 
   
               <BtnMaterial
-          type="submit"
-          variant="contained"
-    
-          disabled={isLoading}
-          style={{
-            backgroundColor: theme.colors.secondary.x500,
-            borderRadius: '20px',
-            marginTop: '1rem',
-            textAlign: 'center',
-            margin: '1rem auto',
-            width: '50%'
-          }}
-          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
-        >
+                type="submit"
+                variant="contained"
+          
+                disabled={isLoading}
+                style={{
+                  backgroundColor: theme.colors.secondary.x500,
+                  borderRadius: '20px',
+                  marginTop: '1rem',
+                  textAlign: 'center',
+                  margin: '1rem auto',
+                  width: '70%'
+                }}
+                startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
           {isLoading ? <Text color={theme.colors.neutral.x000}>Enviando...</Text> : <Text  color={theme.colors.neutral.x000}>Enviar para todos os buffets da região</Text>}
         </BtnMaterial>
               

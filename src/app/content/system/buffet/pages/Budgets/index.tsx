@@ -140,7 +140,8 @@ const Budgets = () =>{
           </TableHead>
 
           <TableBody>
-            {dataTable.slice(viewElements, viewElements + 20).map((item, index)=>(
+            {dataTable?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} >
                 <TableCell>{item?.['orderNumber']}</TableCell>
                 <TableCell>{item?.['data']}</TableCell>

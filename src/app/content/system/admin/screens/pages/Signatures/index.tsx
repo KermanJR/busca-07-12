@@ -71,7 +71,8 @@ const Signatures = () =>{
           </TableHead>
 
           <TableBody>
-            {signatures.slice(viewElements, viewElements + 20).map((item, index)=>(
+            {signatures?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <TableCell>{item?.['id']}</TableCell>
                 <TableCell>{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
@@ -160,7 +161,7 @@ const Signatures = () =>{
           </TableBody>
         </Box>
       </Box>
-      <Pagination currentPage={viewElements + 1} qtdElements={signatures.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
+      <Pagination currentPage={currentPage} qtdElements={signatures.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
     </Box>
   )
 }

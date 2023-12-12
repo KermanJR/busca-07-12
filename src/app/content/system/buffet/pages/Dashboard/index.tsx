@@ -16,7 +16,7 @@ import Image from "@src/app/theme/components/Image/Image";
 import Pagination from "@src/app/components/system/Pagination";
 import { useContext, useEffect, useState } from "react";
 import BuffetService from "@src/app/api/BuffetService";
-
+import Input from "@src/app/theme/components/Input/Input";
 
 import Link from "next/link";
 import { UserContext } from "@src/app/context/UserContext";
@@ -27,6 +27,8 @@ import { differenceInCalendarDays, differenceInDays, isAfter, parseISO } from "d
 import PagBankService from "@src/app/api/PagBankService";
 import format from "date-fns/format";
 import moment from "moment";
+import InputDash from "@src/app/components/system/InputDash";
+
 
 const Homedash = () =>{  
 
@@ -178,6 +180,8 @@ const Homedash = () =>{
       setValorPlanoBasico(res[0].valor_mensal)
     })
   }, [])
+
+
 
 
   
@@ -348,7 +352,7 @@ const Homedash = () =>{
               <TableCell>Nome do Evento<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="entidade.nome"/></TableCell>
               <TableCell>Qtd. Pessoas<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="qtd_pessoas"/></TableCell>
               <TableCell>Período<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="periodo"/></TableCell>
-              <TableCell>Tipo do Evento<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="tipo"/></TableCell>
+              {/*<TableCell>Tipo do Evento<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="tipo"/></TableCell>*/}
               <TableCell>Status<FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="id"/></TableCell>
              
             </TableRow>
@@ -356,9 +360,10 @@ const Homedash = () =>{
 
           <TableBody>
             
-            {currentPropostas.map((item, index)=>(
+            {currentPropostas?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <Link href={`buffet/`} key={index} onClick={(e)=>handleBuffetClick(item?.id)}>
-              <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '0rem'}}>
+              <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row'}}>
                 <TableCell >{item?.['id']}</TableCell>
                 <TableCell>{converterData(item?.['data_do_evento'])}</TableCell>
                 <TableCell>{item?.['nome']}</TableCell>
@@ -374,20 +379,10 @@ const Homedash = () =>{
                 <TableCell>Noite</TableCell>
                 }
 
-                {item?.['tipo'] === "1"&& 
-                <TableCell>Infantil</TableCell>
-                }
-                {item?.['tipo'] === "2" && 
-                <TableCell>Domicílio</TableCell>
-                }
-                {item?.['tipo'] === "3" && 
-                <TableCell>Casamento</TableCell>
-                }
-                {item?.['tipo'] === "4" && 
-                <TableCell>Confraternização</TableCell>
-                }
+                
+               
 
-  
+     
                 <Box tag="td"
                   styleSheet={{
                     padding: '.7rem',

@@ -218,7 +218,8 @@ const Homedash = () =>{
           </TableHead>
 
           <TableBody>
-            {viewPayments.slice(viewElements, viewElements + 10).map((item, index)=>(
+            {viewPayments?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'none', gap: 'none'}}>
                 <TableCell styleSheet={{ width: '16.6%'}}>{item?.['id']}</TableCell>
                 <TableCell  styleSheet={{  width: '18.6%'}}>{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
@@ -334,7 +335,7 @@ const Homedash = () =>{
           </TableBody>
         </Box>
       </Box>
-      <Pagination currentPage={viewElements + 1} qtdElements={payments.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
+      <Pagination currentPage={currentPage} qtdElements={payments.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
     </Box>
   )
 }

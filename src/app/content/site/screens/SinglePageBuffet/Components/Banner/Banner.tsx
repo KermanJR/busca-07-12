@@ -4,11 +4,31 @@ import Button from "@src/app/theme/components/Button/Button";
 import Text from "@src/app/theme/components/Text/Text";
 
 import ImageBanner from '../../../../../../../../public/assets/images/banner_singlePage_buffet.webp'
+import { useContext } from "react";
+import { UserContext } from "@src/app/context/UserContext";
+import { useRouter } from "next/router";
 
 export default function Banner({data}){
 
+    console.log(data)
+
     const theme = useTheme();
     const imagens = data?.galerias;
+    const router = useRouter();
+
+    const {
+        idBuffet,
+        setIdBuffet,
+        setDataBuffet
+    } = useContext(UserContext);
+
+    const handleSubmit = (e, idEntidade)=>{
+        e.preventDefault();
+        setIdBuffet(idEntidade)
+        setDataBuffet(data)
+        router.push('/orcamento-por-regiao')
+
+    }
  
 
 
@@ -51,7 +71,7 @@ export default function Banner({data}){
                     Cadastre-se e solicite seu orçamento
                 </Text>
 
-                <Button href="/orcamento-por-regiao" variant="contained" colorVariant="secondary" size="lg" styleSheet={{margin: '2rem auto'}}>Solicitar orçamento</Button>
+                <Button onClick={(e)=>handleSubmit(e, data?.id_entidade)} variant="contained" colorVariant="secondary" size="lg" styleSheet={{margin: '2rem auto'}}>Solicitar orçamento</Button>
             </Box>
         </Box>
     )

@@ -117,7 +117,8 @@ const Assesment = () =>{
           </TableHead>
 
           <TableBody>
-            {buffets.slice(viewElements, viewElements + 20).map((item, index)=>(
+            {buffets?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+          ?.map((item, index)=>(
               <TableRow key={index} >
                 <TableCell>{item?.['id']}</TableCell>
                 <TableCell>{item?.['slug']}</TableCell>
@@ -147,7 +148,7 @@ const Assesment = () =>{
           </TableBody>
         </Box>
       </Box>
-      <Pagination currentPage={viewElements + 1} elementsPerPage={elementsPerPage} qtdElements={buffets.length}  onPageChange={handlePageChange}/>
+      <Pagination currentPage={currentPage} elementsPerPage={elementsPerPage} qtdElements={buffets.length}  onPageChange={handlePageChange}/>
     </Box>
   )
 }

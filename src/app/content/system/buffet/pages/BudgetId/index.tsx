@@ -105,6 +105,7 @@ useEffect(() => {
 
 
 
+
   
 
   return(
@@ -156,42 +157,15 @@ useEffect(() => {
           </Box> 
           <Box>
             <Text>Tipo do evento</Text>
-
-            {dataEvent[0]?.['tipo'] === "1" && 
-                <InputDash 
-              type="text" 
-              placeholder="Tipo do evento"
-              value="Infantil"
-              disabled={true}
-            /> 
-                }
-                {dataEvent[0]?.['tipo']=== "2" && 
-
-                <InputDash 
-              type="text" 
-              placeholder="Tipo do evento"
-              value="Domicílio"
-              disabled={true}
-            /> 
-                }
-                {dataEvent[0]?.['tipo'] === "3" && 
-    
-                <InputDash 
-              type="text" 
-              placeholder="Tipo do evento"
-              value="Casamento"
-              disabled={true}
-            /> 
-                }
-                {dataEvent[0]?.['tipo'] === "4" && 
- 
-                <InputDash 
-              type="text" 
-              placeholder="Tipo do evento"
-              value="Confraternização"
-              disabled={true}
-            /> 
-                }
+         
+               {Array.isArray(dataEvent[0]?.['tipo']) && dataEvent[0]?.['tipo']?.length > 1 ? 
+                    dataEvent[0]?.['tipo']?.map((item1, index)=>{
+                      return <textarea>{item1}</textarea>
+                    })
+                    : 
+                    <InputDash styleSheet={{width: '100px'}} value={dataEvent[0]?.['tipo']}/>
+                  }
+            
  
           </Box>
         </Box>
