@@ -248,7 +248,7 @@ const Homedash = () =>{
                 )}
 
 
-                {item.status === 'ACTIVE' && (
+                {item.status === 'TRIAL' && (
                   <Box tag="td"
                   styleSheet={{
                     padding: '.7rem',
@@ -263,7 +263,7 @@ const Homedash = () =>{
                       textAlign: 'center'
                     }}
                   >
-                    Ativo
+                    Ativo/Trial
                   </Text>
                 
                 </Box>

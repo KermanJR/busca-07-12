@@ -35,6 +35,32 @@ const Signatures = () =>{
       setCurrentPage(pageNumber);
   
     };
+
+    function calcularDataExpiracao(dataString) {
+      // Verifica se a dataString é fornecida
+      if (!dataString) {
+        return 'Data inválida';
+      }
+    
+      // Converte a string para um objeto Date
+      const dataOriginal = new Date(dataString);
+    
+      // Verifica se a conversão foi bem-sucedida
+      if (isNaN(dataOriginal.getTime())) {
+        return 'Data inválida';
+      }
+    
+      // Adiciona 90 dias à data original
+      const dataExpiracao = new Date(dataOriginal);
+      dataExpiracao.setDate(dataOriginal.getDate() + 90);
+    
+      // Formata a nova data para o formato DD/MM/AAAA
+      const dia = String(dataExpiracao.getDate()).padStart(2, '0');
+      const mes = String(dataExpiracao.getMonth() + 1).padStart(2, '0');
+      const ano = dataExpiracao.getFullYear();
+    
+      return `${dia}/${mes}/${ano}`;
+    }
     
   
     
@@ -62,7 +88,8 @@ const Signatures = () =>{
           <TableHead>
             <TableRow styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
               <TableCell><p>ID</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="id"/></TableCell>
-              <TableCell><p>Data</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
+              <TableCell><p>Data Início</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
+              <TableCell><p>Data Fim</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
               <TableCell><p>Nome</p> <FilterArrows functionupArrow={orderByStringGrowing} functionDownArrow={orderByStringDescending} property="entidade.nome"/></TableCell>
               <TableCell><p>Valor</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="valor"/></TableCell>
               <TableCell><p>Desconto</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="desconto"/></TableCell>
@@ -76,6 +103,7 @@ const Signatures = () =>{
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <TableCell>{item?.['id']}</TableCell>
                 <TableCell>{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
+                <TableCell>{calcularDataExpiracao(item?.['updated_at'])}</TableCell>
                 <TableCell>{item?.['entidade']['nome']}</TableCell>
                 <TableCell>R$ {item?.['valor']}</TableCell>
                 <TableCell>R$ {item?.['desconto']}</TableCell>
@@ -99,7 +127,7 @@ const Signatures = () =>{
                 )}
 
 
-                {item.status === 'ACTIVE' && (
+                {item.status === 'TRIAL' && (
                   <Box tag="td"
                   styleSheet={{
                     padding: '.7rem',
@@ -112,12 +140,12 @@ const Signatures = () =>{
                       textAlign: 'center'
                     }}
                   >
-                    Ativo
+                    Ativo/Trial
                   </Text>
                  
                 </Box>
                 )}
-                {(item.status === "OVERDUE" || item.status == null) && (
+                {(item.status === "PENDENTE" || item.status == null) && (
                   <Box tag="td"
                   styleSheet={{
                     padding: '.7rem',

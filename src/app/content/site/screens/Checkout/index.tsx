@@ -554,7 +554,7 @@ export default function Checkout(){
     async function createSignatureBuffet(id){
       const data = {
         "tipo": id,
-        "status": 'ACTIVE',
+        "status": 'TRIAL',
         "valor": valorPlanoBasico,
         "desconto": 1.22,
         "id_plano": Number(localStorage?.getItem('ID_PLAN')),
