@@ -165,8 +165,7 @@ const Settings = () =>{
   }
 
 
- 
-console.log(dadosAssinatura)
+
   function editarDadosAssinante(e){
     e.preventDefault();
     const data = {

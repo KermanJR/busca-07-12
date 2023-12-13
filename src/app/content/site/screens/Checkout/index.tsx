@@ -208,18 +208,22 @@ export default function Checkout(){
 
     
 
-    function createPaymentPagBank(){
+    async function createPaymentPagBank(){
+
       const partesData = expirationCard.split("/");
       const exp_month = partesData[0];
       const exp_year = partesData[1]; 
+
       let cypherCard = encryptCardPagSeguro({
-        publicKey: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr+ZqgD892U9/HXsa7XqBZUayPquAfh9xx4iwUbTSUAvTlmiXFQNTp0Bvt/5vK2FhMj39qSv1zi2OuBjvW38q1E374nzx6NNBL5JosV0+SDINTlCG0cmigHuBOyWzYmjgca+mtQu4WczCaApNaSuVqgb8u7Bd9GCOL4YJotvV5+81frlSwQXralhwRzGhj/A57CGPgGKiuPT+AOGmykIGEZsSD9RKkyoKIoc0OS8CPIzdBOtTQCIwrLn2FxI83Clcg55W8gkFSOS6rWNbG5qFZWMll6yl02HtunalHmUlRUL66YeGXdMDC2PuRcmZbGO5a/2tbVppW6mfSWG3NPRpgwIDAQAB",
+        publicKey: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp/dXanZK+XD3aImnF3nAkf5ijDedp9Lk2vnhxosd0BqQ/74PoXmeHU7XLt1Iu+o4OIBf1C12rVGULzl2zjUJDlI0QZp+wmLVEJkauboB7sG0BZzKbp0TlNmgX6VOtJ0/91e826wCkZ13FzOmLG+g1BAFhoLHHP3Cq4zO98yF/pw7k/n+P4QgOyEhUvk2LX4x1eqfo1u7GDPJ5wCJoNB9B4GLIPvAMrWDV/6EGern7EDf6q2ljUPHy2zXXOManf4s7NT2U9YahiCNMbiRVi4aJ8DwjuYKkYDvsVV2xn0eiNkXoqY02p1QtZ+ZyTPRWeJr0enHpEGeXRbdosXPhMk/twIDAQAB",
         number: numberCard,
         holder: nameCard,
         expYear:exp_year,
         expMonth: exp_month,
         securityCode: cvvCard,
       })
+
+ 
       const encrypted = cypherCard?.encryptedCard;
       const hasErrors = cypherCard?.hasErrors;
       const errors = cypherCard?.errors;
@@ -300,9 +304,9 @@ export default function Checkout(){
       e.preventDefault();
       const data = {
           "plan": {
-            "id": window?.localStorage?.getItem('ID_PLAN') == '1' && 'PLAN_3571D956-D88B-485C-89EC-18CA89CF0C1C' ||
-            window?.localStorage?.getItem('ID_PLAN') == '2' && 'PLAN_84372B0E-18DF-4CB2-856F-7F97175EEBFE' ||
-            window?.localStorage?.getItem('ID_PLAN') == '3' && 'PLAN_4F77888E-C80C-4289-A174-953C0E9AAA41' 
+            "id": window?.localStorage?.getItem('ID_PLAN') == '1' && 'PLAN_C75A95FA-20DA-444C-A98E-E1FEF8EF3168' ||
+            window?.localStorage?.getItem('ID_PLAN') == '2' && 'PLAN_7D16F3C4-4A61-4747-A35E-2196630CA895' ||
+            window?.localStorage?.getItem('ID_PLAN') == '3' && 'PLAN_7EAED016-3CC9-45C9-8FAE-B145B55BA1C3' 
           },
           "customer": {
             "name": nomeAssinante,
@@ -311,9 +315,11 @@ export default function Checkout(){
             "billing_info": [
               {
                 "type": "CREDIT_CARD",
+                "capture": true,
                 "card": {
                   "encrypted": await createPaymentPagBank(),
                   "security_code": cvvCard,
+                  "store": true
                 }
               }
             ],
@@ -346,7 +352,7 @@ export default function Checkout(){
               "card": {
                 "encrypted": await createPaymentPagBank(),
                 "security_code": cvvCard,
-
+                "store": true
               }
             }
           ]
@@ -358,7 +364,7 @@ export default function Checkout(){
             setErrorsPedido(res?.error_messages)
           }
           else {
-            if(res?.status === 'ACTIVE' || res?.status ===  'OVERDUE'){
+            if(res?.status === 'TRIAL'){
              //await EditSignatureBuffet(res?.id, res?.status);
               await createSignatureBuffet(res?.id);
               setShowConfirmationModal(true)
@@ -476,6 +482,7 @@ export default function Checkout(){
 
     const handleChangeNumeroCartao = (e) => {
       setNumberCard(e);
+      console.log(e)
       detectarBandeira(e);
     };
   

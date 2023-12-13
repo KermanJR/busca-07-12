@@ -5,7 +5,8 @@ import Text from "@src/app/theme/components/Text/Text";
 export default function CategoryFilter({ categories1, categories2, selectedCategories, onCategoryChange }) {
   const [showSubModal, setShowSubModal] = useState(false);
 
-  const toggleSubModal = () => {
+  const toggleSubModal = (e) => {
+    e.preventDefault();
     setShowSubModal(!showSubModal);
   };
 
@@ -22,7 +23,11 @@ export default function CategoryFilter({ categories1, categories2, selectedCateg
         fontWeight: 500,
         fontSize: '.875rem'
         
-      }} onClick={toggleSubModal}><Text styleSheet={{fontSize: '.875rem', fontWeight: '400', color: 'black'}}>Tipo de Festa</Text></button>
+      }} onClick={toggleSubModal}><Text styleSheet={{fontSize: '.875rem', fontWeight: '400', color: 'black'}}>
+        Tipo de Festa
+      </Text>
+      {/*<span className={`arrow ${showSubModal ? "up" : "down"}`}></span>*/}
+    </button>
       {showSubModal && (
         <div className="sub-modal">
           <Text>Eventos Sociais</Text>
@@ -65,6 +70,27 @@ export default function CategoryFilter({ categories1, categories2, selectedCateg
           display: inline-block;
           
         }
+        .arrow {
+          width: 10px;
+          height: 10px;
+          position: absolute;
+          top: 50%;
+          right: 10px;
+          transform: translateY(-50%);
+          font-size: 1.2rem;
+        }
+
+        .arrow::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 5px;
+          width: 1px;
+          height: 10px;
+          background-color: black;
+        }
+
+       
 
         .sub-modal {
           position: absolute;

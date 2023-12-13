@@ -28,7 +28,7 @@ import GeolocalizationMapsService from "@src/app/api/GeolocalizationMapsService"
 import { Relacionados } from "./Components/Relacionados";
 import WhatsAppButton from "../HomeScreen/Components/WhatsappButton";
 
-export default function SinglePageBuffet(){
+export default function SinglePageBuffet(slug){
   const {
     idBuffet,
     dataBuffet,

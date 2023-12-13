@@ -47,6 +47,7 @@ export default function BudgetByRegion(){
 
   const {
     dataBuffet,
+    setDataBuffet,
     dataUser,
     setDataUser,
     idBuffet
@@ -393,7 +394,7 @@ export default function BudgetByRegion(){
             "status": String(dataUser?.['entidade']?.id),
             "id_entidade": idBuffet,
             "periodo": periodo,
-            "id_cidade": Number(idCidade),
+            "id_cidade": dataBuffet?.['entidade']?.enderecos[0]?.endereco?.cidade?.id,
             "bairro": bairro,
             "data_do_evento": `${dataDoEvento} 00:00:00`
           }
@@ -492,12 +493,26 @@ export default function BudgetByRegion(){
   
     ]
 
+    useEffect(()=>{
+      if(typeof window != undefined){
+        BuffetService.showBuffetById(Number(window?.localStorage?.getItem('ID_BUFFET')))
+        .then(res=>{
+          setDataBuffet(res);
+          console.log(res)
+        }).catch(err=>{
+          console.log(err);
+        })
+      }
+    }, [])
 
-    console.log(dataBuffet)
     
   
   
     return(
+
+      dataBuffet?.length > 1 ?
+    
+      
         <Box tag="main"
           styleSheet={{
           alignItems: 'center',
@@ -682,6 +697,171 @@ export default function BudgetByRegion(){
         </Box>
 
       </Box>
+      :
+      <Box tag="main"
+      styleSheet={{
+      alignItems: 'center',
+      margin: '0 auto'
+    }}
+    >
+      {showConfirmationModal && <ConfirmationModal />}
+      {showNegationModal && <NegationModal />}
+
+
+      {/* Novo modal que será aberto */}
+      {isNovoModalOpen &&(
+        <ModalLogin isOpen={isNovoModalOpen} onClose={closeNovoModal} />
+      )}
+
+      {isModalOpenBudget &&(
+        <ModalBudget isOpen={isModalOpenBudget} onClose={closeBudgetModal} />
+      )}  
+
+{isModalRecoveryPassword &&(
+        <ModalRecoveryPassword isOpen={isModalRecoveryPassword} onClose={closeRecoveryPassword} />
+      )} 
+
+      {/*Banner Principal*/}      
+      <Box styleSheet={{
+          width: '100%',
+          height: '281px',
+          display: 'flex',
+          textAlign: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+          background: `url(${BannerAnotherPages.src})`,
+          padding: `${isMobile ? '5rem': '6rem'}`,
+          marginTop: '5rem'
+      }}>
+          <Text 
+            tag="h1" 
+            variant="heading1Bold" 
+            styleSheet={{color: theme.colors.neutral.x000, fontSize: !(size < 600) ? '2.5rem' : '1.5rem'}}
+          >
+              Faça seu orçamento
+          </Text>
+      </Box> 
+
+        <Box styleSheet={{
+          width: size <= 820? '95%':'45%',
+          padding:  size <= 820? '2rem':'2rem 3rem',
+          marginTop: '4rem',
+          borderRadius: '8px',
+          boxShadow: `2px 2px 10px 2px ${theme.colors.neutral.x050}`
+        }}>
+          <Text variant="heading4Bold" styleSheet={{textAlign: 'left'}} color={theme.colors.primary.x500}>
+           Evento - {dataBuffet?.['entidade']?.nome}
+          </Text>
+          <Box tag="form" styleSheet={{marginTop: '.5rem'}}  onSubmit={handleSubmit}>
+            <Box styleSheet={{
+              display: 'grid',
+              gridTemplateColumns:  size <= 820? '1fr':'65% 33%',
+              gap: '1rem',
+              paddingTop: '1rem'
+            }}>
+              <InputDash  
+              required={true}
+              onChange={(e)=>setNome(e)}
+                type="text" placeholder="Nome do evento" styleSheet={{padding: '.5rem', borderRadius: '5px', backgroundColor: theme.colors.neutral.x050}}/>
+              <InputDash type="number" onChange={(e)=>setQtdPessoas(e)} placeholder="Quantidade de pessoas" styleSheet={{padding: '.5rem',  borderRadius: '5px', backgroundColor: theme.colors.neutral.x050}}/>
+            </Box>
+            <Box styleSheet={{
+              display: 'grid',
+              gridTemplateColumns:  size <= 820? '1fr':'49% 49%',
+              gap: '1rem',
+              paddingTop: '1rem'
+            }}>
+              <label htmlFor="dateInput" style={{width: '100%'}}>
+                <input id="dateInput" name="dateInput" type="date" placeholder="Data do evento"  onChange={(e)=>setDataDoEvento(e.target.value)} style={{borderRadius: '5px', backgroundColor: theme.colors.neutral.x050, padding: '.5rem', color: 'black', height: '48px', width: '100%'}}/>
+              </label>
+              <Select 
+                options={options}
+                onChange={(e)=>setPeriodo(e)}
+                styleSheet={{
+                  borderRadius: '5px',
+                  backgroundColor: theme.colors.neutral.x050,
+                  color: 'black',
+                  fontSize: '.875rem',
+                  padding: '.8rem',
+                  border: 'none'
+                }}
+              />
+            </Box>
+            <Box styleSheet={{
+              display: 'grid',
+              gridTemplateColumns:  size <= 820? '1fr':'49% 49%',
+              gap: '1rem',
+              paddingTop: '1rem'
+            }}>
+              <CategoryFilter 
+                categories1={categories1}
+                categories2={categories2} 
+                onCategoryChange={handleCategoryChange} 
+                selectedCategories={selectedCategories}
+              />
+
+              <InputDash 
+                disabled={true} 
+                value={dataBuffet?.['entidade']?.enderecos[0]?.endereco?.cidade?.estado?.nome}
+              />
+
+            </Box>
+            <Box styleSheet={{
+              display: 'grid',
+              gridTemplateColumns:  size <= 820? '1fr':'49% 49%',
+              gap: '1rem',
+              paddingTop: '1rem'
+            }}>
+              <InputDash disabled={true} value={dataBuffet?.['entidade']?.enderecos[0]?.endereco?.cidade?.nome}/>
+              <InputDash onChange={(e)=>setBairro(e)} type="text"  placeholder="Bairro" styleSheet={{padding: '.5rem',  borderRadius: '5px', backgroundColor: theme.colors.neutral.x050}}/>
+            </Box>
+            
+            <Box styleSheet={{paddingTop: '1rem'}}>
+              <InputDash 
+              onChange={(e)=>setObservacoes(e)}
+              required={true}
+                tag="textarea"  
+                placeholder="Observações: Descreva detalhadamente o que precisa para seu evento." 
+                styleSheet={{height: '133px',padding: '.5rem',  borderRadius: '5px', backgroundColor: theme.colors.neutral.x050, width: 'auto'}}/>
+            </Box>
+
+
+          <BtnMaterial
+            type="submit"
+            variant="contained"
+      
+            disabled={isLoading}
+            style={{
+              backgroundColor: theme.colors.secondary.x500,
+              borderRadius: '20px',
+              marginTop: '1rem',
+              textAlign: 'center',
+              margin: '1rem auto',
+              width: '70%'
+            }}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+      {isLoading ? <Text color={theme.colors.neutral.x000}>Enviando...</Text> : <Text  color={theme.colors.neutral.x000}>Enviar para todos os buffets da região</Text>}
+    </BtnMaterial>
+          
+          {error ? <Text styleSheet={{color:' red', textAlign: 'center', marginTop: '1rem', fontSize: '.875rem'}}>{error}</Text>: ''}
+          </Box>
+          {
+            idUser == null || idUser == undefined || idUser == '' ? 
+            <Box styleSheet={{display: 'flex', flexDirection: 'row', gap: '1rem', marginTop: '1rem', alignSelf: 'center'}}>
+            <Text styleSheet={{textAlign: 'left', color: theme.colors.neutral.x999}} variant="body1">Ainda não tem uma conta?</Text>
+            <Box onClick={openBudgetModal} styleSheet={{cursor: 'pointer'}}>
+              <Text styleSheet={{color: theme.colors.secondary.x500}}>Cadastre-se</Text>
+            </Box>
+          </Box>:''
+            
+          }
+          
+        </Box>
+      <Box>
+    </Box>
+
+  </Box>
     )
 
 }

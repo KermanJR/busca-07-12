@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const { default: axios } = require('axios');
+
 const nextConfig = {
   reactStrictMode: true,
   compress: true,
@@ -21,7 +23,25 @@ const nextConfig = {
       },
     ];
   },
-// next.config.js
+
+  exportPathMap: async function () {
+    let buffetSlugs = await axios.get('https://buscabuffet.com.br/api/buffets')
+    .then(res=>{
+      return res
+    })
+    .catch(err=>{
+      return err
+    })
+
+    const paths = buffetSlugs?.data.reduce((acc, slug) => {
+      acc[`/${slug?.slug}`] = { page: '/[buffetSlug]' };
+      return acc;
+    }, {});
+
+    return paths;
+
+  },
+
   
 }
 

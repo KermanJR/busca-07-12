@@ -7,11 +7,11 @@ import { useRouter } from 'next/router';
 
 export default function Buffet(){
   const router = useRouter();
-  
+  const { buffetSlug } = router.query;
 
     return(
       <><Header/>
-        <SinglePageBuffet/>
+        <SinglePageBuffet slug={buffetSlug}/>
         <Footer/>
       </>
     )
