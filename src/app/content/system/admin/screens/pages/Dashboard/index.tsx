@@ -18,6 +18,7 @@ import UserImage from '../../../../../../../../public/assets/icons/user_dash_svg
 import Pagination from "@src/app/components/system/Pagination";
 import { useEffect, useState } from "react";
 import BuffetService from "@src/app/api/BuffetService";
+import PagBankService from "@src/app/api/PagBankService";
 
 
 const Homedash = () =>{
@@ -86,6 +87,41 @@ const Homedash = () =>{
     setCurrentPage(pageNumber);
 
   };
+  
+  function calcularDataExpiracao(dataString) {
+    // Verifica se a dataString é fornecida
+    if (!dataString) {
+      return 'Data inválida';
+    }
+  
+    // Converte a string para um objeto Date
+    const dataOriginal = new Date(dataString);
+  
+    // Verifica se a conversão foi bem-sucedida
+    if (isNaN(dataOriginal.getTime())) {
+      return 'Data inválida';
+    }
+  
+    // Adiciona 90 dias à data original
+    const dataExpiracao = new Date(dataOriginal);
+    dataExpiracao.setDate(dataOriginal.getDate() + 90);
+  
+    // Formata a nova data para o formato DD/MM/AAAA
+    const dia = String(dataExpiracao.getDate()).padStart(2, '0');
+    const mes = String(dataExpiracao.getMonth() + 1).padStart(2, '0');
+    const ano = dataExpiracao.getFullYear();
+  
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  useEffect(()=>{
+    PagBankService.getSignaturesPagBankById(viewPayments.map(item=>{
+      item
+    }))
+    .then(res=>{
+      console.log(res);
+    })
+  }, [])
   
 
 
@@ -209,7 +245,8 @@ const Homedash = () =>{
         <TableHead >
             {loading && <TableRow styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
               <TableCell><p>ID</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="id"/></TableCell>
-              <TableCell><p>Data</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
+              <TableCell><p>Data Início</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
+              <TableCell><p>Data Fim</p> <FilterArrows functionupArrow={orderByDateGrowing} functionDownArrow={orderByDateDescending} property="updated_at"/></TableCell>
               <TableCell><p>Nome</p> <FilterArrows functionupArrow={orderByStringGrowing} functionDownArrow={orderByStringDescending} property="entidade.nome"/></TableCell>
               <TableCell><p>Valor</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="valor"/></TableCell>
               <TableCell><p>Desconto</p> <FilterArrows functionupArrow={orderByGrowing} functionDownArrow={orderByDescending} property="desconto"/></TableCell>
@@ -220,41 +257,20 @@ const Homedash = () =>{
           <TableBody>
             {viewPayments?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
           ?.map((item, index)=>(
-              <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'none', gap: 'none'}}>
-                <TableCell styleSheet={{ width: '16.6%'}}>{item?.['id']}</TableCell>
-                <TableCell  styleSheet={{  width: '18.6%'}}>{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
-                <TableCell  styleSheet={{  width: '19.6%'}}>{item?.['entidade']['nome']}</TableCell>
-                <TableCell  styleSheet={{  width: '18.6%'}}>R$ {item?.['valor']}</TableCell>
-                <TableCell  styleSheet={{  width: '16.6%'}}>R$ {item?.['desconto']}</TableCell>
+              <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: 'none'}}>
+                <TableCell>{item?.['id']}</TableCell>
+                <TableCell >{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
+                <TableCell>{calcularDataExpiracao(item?.['updated_at'])}</TableCell>
+                <TableCell>{item?.['entidade']['nome']}</TableCell>
+                <TableCell>R$ {item?.['valor']}</TableCell>
+                <TableCell>R$ {item?.['desconto']}</TableCell>
 
-                {item.status == "Nova assinatura" && (
-                  <Box tag="td"
-                  styleSheet={{
-                    padding: '.7rem',
-                    borderRadius: '10px',
-                    backgroundColor: theme.colors.secondary.x1600,
-           
-                    width: '16.6%'
-                  }}    
-                >
-                  <Text styleSheet={{
-                      color: theme.colors.secondary.x800,
-                      textAlign: 'center'
-                    }}
-                  >
-                    {item?.['status']}
-                  </Text>
-                </Box>
-                )}
-
-
-                {item.status === 'TRIAL' && (
+                {item?.status === 'TRIAL' && (
                   <Box tag="td"
                   styleSheet={{
                     padding: '.7rem',
                     borderRadius: '10px',
                     backgroundColor: theme.colors.positive.x050,
-                 
                     width: '10.6%'
                   }}    
                 >

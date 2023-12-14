@@ -76,13 +76,7 @@ export default function Checkout(){
     const router = useRouter();
 
 
-  //Functions
-    const navigatePlans = (e: any)=>{
-      e.preventDefault();
-      router.push('/dashboard/buffet')
-    }
-
-
+ 
 
   //Context
     const {
@@ -95,7 +89,6 @@ export default function Checkout(){
     const {
       selectedPlan,
       dataUser,
-      dataBuffet,
       setDataBuffet
     } = useContext(UserContext);
 
@@ -209,7 +202,6 @@ export default function Checkout(){
     
 
     async function createPaymentPagBank(){
-
       const partesData = expirationCard.split("/");
       const exp_month = partesData[0];
       const exp_year = partesData[1]; 
@@ -222,8 +214,6 @@ export default function Checkout(){
         expMonth: exp_month,
         securityCode: cvvCard,
       })
-
- 
       const encrypted = cypherCard?.encryptedCard;
       const hasErrors = cypherCard?.hasErrors;
       const errors = cypherCard?.errors;
@@ -231,55 +221,7 @@ export default function Checkout(){
       return encrypted;
     }
 
-    //EDITAR BUFFET
-  /*function EditBuffet(){
-    BuffetService.editBuffets(dataBuffet?.['id'], {
-      slug: dataBuffet?.['slug'],
-      capacidade_total: dataBuffet?.['capacidade_total'],
-      area_total: dataBuffet?.['area_total'],
-      sobre: dataBuffet?.['sobre'],
-      horario_atendimento: dataBuffet?.['horario_atendimento'],
-      horario_atendimento_fds: dataBuffet?.['horario_atendimento_fds'],
-      youtube: dataBuffet?.['youtube'],
-      status: 'A',
-      redes_sociais: [
-        {
-            "descricao": "https://www.youtube.com/",
-            "tipo":  dataBuffet?.['youtube'] ? dataBuffet?.['youtube']:'Nenhum'
-        }
-      ]
-    })
-    .then(async (response)=>{
-      console.log(response)
-    }).catch((error)=>{
-      console.log(error)
-    })
-  }*/
 
-
-
-        
-
-    /*async function EditSignatureBuffet(idOrder, status){
-      const data = {
-        "tipo": `${idOrder}`,
-        "status": status,
-        "valor": converterMoedaParaNumero2(valuePlan),
-        "desconto": 1.22,
-        "id_plano": Number(localStorage?.getItem('ID_PLAN')),
-        "id_entidade": dataUser?.['entidade']?.id
-    }
-      PagBankService.editSignatureInBuffet(data, dataBuffet?.['entidade']?.assinaturas[0]?.id)
-        .then(res=>{
-          if(res){
-            return true
-          }else{
-            return false
-          }
-        }).catch(err=>{
-          console.log(err)
-        })
-    }*/
 
     function converterMoedaParaNumero(valor) {
       valor = valor?.replace('R$', ' ').replace(',', '.');
@@ -288,11 +230,7 @@ export default function Checkout(){
       return valorEmCentavos;
     }
     
-    function converterMoedaParaNumero2(valor) {
-      valor = valor?.replace('R$', ' ').replace(',', '.');
-      const numero = parseFloat(valor);
-      return numero;
-    }
+
 
     const removeMask = (formattedValue) => {
       // Remove todos os caracteres não numéricos
@@ -366,7 +304,7 @@ export default function Checkout(){
           else {
             if(res?.status === 'TRIAL'){
              //await EditSignatureBuffet(res?.id, res?.status);
-              await createSignatureBuffet(res?.id);
+              await createSignatureBuffet(res);
               setShowConfirmationModal(true)
               //EditBuffet()
               setSuccessPedido(true)
@@ -482,7 +420,6 @@ export default function Checkout(){
 
     const handleChangeNumeroCartao = (e) => {
       setNumberCard(e);
-      console.log(e)
       detectarBandeira(e);
     };
   
@@ -492,16 +429,12 @@ export default function Checkout(){
     useEffect(()=>{
       BuffetService.showPlans()
       .then(res=>{
-        let id_plan =  window?.localStorage?.getItem('VALUE_PLAN')
+        let id_plan =  window?.localStorage?.getItem('VALUE_PLAN');
         var valorNumericoString = id_plan.replace(/[^\d,]/g, '');
         var valorNumerico = parseFloat(valorNumericoString.replace(',', '.'));
-        setValorPlanoBasico(valorNumerico)
-
+        setValorPlanoBasico(valorNumerico);
       })
     }, [])
-
-
-
 
 
     useEffect(()=>{
@@ -520,7 +453,6 @@ export default function Checkout(){
       .catch(err=>{
         console.log(err)
       })
-  
     }, [])
     
 
@@ -551,12 +483,12 @@ export default function Checkout(){
       }
     }, [errorsPedido, successPedido]);
 
-    async function createSignatureBuffet(id){
+    async function createSignatureBuffet(data2){
       const data = {
-        "tipo": id,
+        "tipo": data2,
         "status": 'TRIAL',
         "valor": valorPlanoBasico,
-        "desconto": 1.22,
+        "desconto": 0,
         "id_plano": Number(localStorage?.getItem('ID_PLAN')),
         "id_entidade": dataUser?.['entidade']?.id
     }
@@ -579,15 +511,13 @@ export default function Checkout(){
       }).catch(err=>{
         console.log(err)
       })
-
-     
     }, [])
 
 
 
-      if(typeof window !== 'undefined'){
-        name = window?.localStorage?.getItem('USER_NAME');
-      }
+    if(typeof window !== 'undefined'){
+      name = window?.localStorage?.getItem('USER_NAME');
+    }
    
  
     return(

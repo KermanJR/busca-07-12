@@ -135,10 +135,82 @@ export default class PagBankService {
   
       return response.data;
     } catch (error) {
-      console.error('Erro ao vincular assinante com plano:', error);
+      console.error('Erro ao editar dados cadastrais do assinante:', error);
       throw error;
     }
   }
+
+
+  //Suspender assinatura
+  static async suspendSignaturePagBankById(id, data): Promise<any> {
+    const url = `${API_URL_BUSCABUFFET}/pagamentos/pagbank?resource=subscriptions/${id}/suspend`;
+    try {
+      const response = await axios.put(url, data,{
+        headers: {
+          Authorization: `Bearer ${apiPagBankKey}`,
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao suspender assinante com plano:', error);
+      throw error;
+    }
+  }
+
+
+  //Cancelar assinatura
+  static async cancelSignaturePagBankById(id, data): Promise<any> {
+    const url = `${API_URL_BUSCABUFFET}/pagamentos/pagbank?resource=subscriptions/${id}/cancel`;
+    try {
+      const response = await axios.put(url, data,{
+        headers: {
+          Authorization: `Bearer ${apiPagBankKey}`,
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao suspender assinante com plano:', error);
+      throw error;
+    }
+  }
+
+  
+  //Alterar assinatura
+  static async editSignaturePagBankById(id, data): Promise<any> {
+    const url = `${API_URL_BUSCABUFFET}/pagamentos/pagbank?resource=subscriptions/${id}`;
+    try {
+      const response = await axios.put(url, data,{
+        headers: {
+          Authorization: `Bearer ${apiPagBankKey}`,
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao suspender assinante com plano:', error);
+      throw error;
+    }
+  }
+
+  //Alterar dados de pagamento do usuário //Card Credit
+  static async editPaymentPagBankById(id, data): Promise<any> {
+    const url = `${API_URL_BUSCABUFFET}/pagamentos/pagbank?resource=customers/${id}/billing_info`;
+    try {
+      const response = await axios.put(url, data,{
+        headers: {
+          Authorization: `Bearer ${apiPagBankKey}`,
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao editar assinante com plano:', error);
+      throw error;
+    }
+  }
+
 
 
 
