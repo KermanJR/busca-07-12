@@ -54,10 +54,15 @@ const Settings = () =>{
   const {
     dataUser,
     setIdBuffet,
-    idBuffet
+    idBuffet,
+    dataBuffet
   } = useContext(UserContext);
 
   const [modalCartao, setModalCartao] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
+
+  const [responseCancel, setResponseCancel] = useState(false);
+ 
 
   async function createPaymentPagBank(){
     const partesData = expirationCard.split("/");
@@ -149,6 +154,26 @@ const Settings = () =>{
           />
       </Box>
       <Box>
+          <Text>Data Nascimento</Text>
+          <InputDash  
+            placeholder="Digite o número"
+            type="text"
+            defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
+            onChange={(e)=>setNumberCard(e)}
+            styleSheet={{backgroundColor: theme.colors.neutral.x200}}
+          />
+      </Box>
+      <Box>
+          <Text>Documento</Text>
+          <InputDash  
+            placeholder="Digite o número"
+            type="text"
+            defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
+            onChange={(e)=>setNumberCard(e)}
+            styleSheet={{backgroundColor: theme.colors.neutral.x200}}
+          />
+      </Box>
+      <Box>
           <Text>N° Cartão</Text>
           <InputDash  
             placeholder="Digite o número"
@@ -184,6 +209,104 @@ const Settings = () =>{
     );
   }
 
+
+  function cancelSignature(e){
+    e.preventDefault();
+    PagBankService.cancelSignaturePagBankById(dadosAssinatura?.['id'])
+    .then(res=>{
+      setResponseCancel(true);
+      EditBuffet();
+      console.log(res)
+    })
+
+
+  }
+
+  //EDITAR BUFFET
+  function EditBuffet(){
+    BuffetService.editBuffets(idBuffet, {
+      slug: dataBuffet?.['slug'],
+      capacidade_total: dataBuffet?.['capacidade_total'],
+      area_total: dataBuffet?.['area_total'],
+      sobre: dataBuffet?.['sobre'],
+      horario_atendimento: dataBuffet?.['horario_atendimento'],
+      horario_atendimento_fds: dataBuffet?.['horario_atendimento_fds'],
+      youtube: dataBuffet?.['youtube'],
+      status: 'I',
+      redes_sociais: [
+        {
+            "descricao": "https://www.youtube.com/",
+            "tipo":  dataBuffet?.['youtube'] ? dataBuffet?.['youtube']:'Nenhum'
+        }
+      ]
+    })
+    .then(async (response)=>{
+      console.log(response)
+    }).catch((error)=>{
+      console.log(error)
+    })
+  }
+
+  function CancelModal(){
+    return (
+      <Box
+        tag="form"
+        styleSheet={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Sobreposição escura
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 999, // Garanta que esteja na parte superior
+        }}
+      >
+        <Box
+          styleSheet={{
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            textAlign: 'left',
+            height: 'auto',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+          }}
+        > <Button onClick={(e)=>setCancelModal(!cancelModal)} variant="outlined" styleSheet={{width: '10px', height: '30px', border: 'none', textAlign: 'left', cursor: 'pointer', marginLeft: '-20px', marginTop: '-1rem'}}>
+        X
+       </Button>
+
+       {responseCancel == false ? 
+       <Text  styleSheet={{fontSize: '1.4rem', textAlign: 'center'}} color={theme.colors.negative.x500}>Cancelar Assinatura</Text>
+       :
+       <Text  styleSheet={{fontSize: '1.4rem', textAlign: 'center', padding: '.5rem'}} color={theme.colors.negative.x500}>Cancelamento Concluído</Text>
+        }
+       
+       
+       {responseCancel == false?   <Text styleSheet={{textAlign: 'center', padding: '1rem'}}>Deseja realmente cancelar sua assinatura do plano { dadosAssinatura['plan']?.name}? </Text>: ''
+       }
+     
+        
+        {responseCancel == true && (
+          <Box styleSheet={{width: '70%', textAlign: 'center', borderRadius: '8px', padding: '1rem', alignSelf: 'center',
+            backgroundColor: theme.colors.neutral.x050
+          }}>
+          <Text>Assinatura cancelada com sucesso.</Text>
+          <Text>Você tem até o dia {new Date(dadosAssinatura?.['trial']?.end_at).toLocaleDateString()} para continuar usufruindo do {dadosAssinatura?.['plan']?.name}!
+          </Text>
+          </Box>
+        )}
+        
+        {responseCancel == false ? <Button
+        styleSheet={{marginTop: '1rem', alignSelf:'center'}} 
+        colorVariant="secondary" onClick={(e)=>cancelSignature(e)}>Cancelar assinatura</Button> : ''}
+        
+        </Box>
+      </Box>
+    );
+  }
+
   
 
 
@@ -206,8 +329,8 @@ const Settings = () =>{
   useEffect(() => {
     BuffetService.showSignaturesById(dataUser['entidade'].id)
     .then(res=>{
-      console.log(res)
-      getSignature(res[0]?.tipo?.id)
+      let id = JSON.parse(res[0]?.tipo)
+      getSignature(id?.id)
     }).catch(err=>{
       console.log(err)
     })
@@ -217,12 +340,24 @@ const Settings = () =>{
   function getSignature(id){
     PagBankService.getSignaturesPagBankById(id)
     .then(res=>{
+      console.log(res)
       setCodeCustomer(res?.customer?.id)
       setDadosAssinatura(res)
     }).catch(err=>{
       console.log(err)
     })
   }
+
+  const extrairConteudoAntesDoHifen = (nome) => {
+    const partes = nome.split('-');
+
+    if (partes.length >= 2) {
+      const conteudoAntesDoHifen = partes[0].trim();
+      return conteudoAntesDoHifen;
+    } else {
+      return nome.trim();
+    }
+  };
 
   const formatDocument = (value) => {
     // Remove caracteres não numéricos
@@ -323,26 +458,43 @@ const Settings = () =>{
     }}>
 
     {modalCartao && <ConfirmationModal />}
+    {cancelModal && <CancelModal />}
+
       <Box styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Box>
           <Text styleSheet={{fontSize: '1.3rem'}}>Plano de Assinatura Atual</Text>
         </Box>
 
-      <Box styleSheet={{display: 'flex', flexDirection: 'row', gap: '2rem'}}>
-      <Button type="button" variant="outlined" styleSheet={{position: 'relative', right: '0'}} colorVariant="negative">Cancelar assinatura</Button>
-      <Button type="button" variant="outlined" styleSheet={{position: 'relative', right: '0'}} onClick={(e)=>setModalCartao(true)}>Exibir dados do cartão</Button>
-      </Box>
-      
+        <Box styleSheet={{display: 'flex', flexDirection: 'row', gap: '2rem'}}>
+          <Button 
+            disabled={dadosAssinatura?.['status'] === 'CANCELED'? true: false}
+            type="button" 
+            variant="outlined" 
+            styleSheet={{position: 'relative', right: '0'}} 
+            colorVariant="negative" 
+            onClick={(e)=>setCancelModal(true)}
+          >
+            Cancelar assinatura
+          </Button>
+          <Button 
+            type="button"
+            variant="outlined"
+            styleSheet={{position: 'relative', right: '0'}}
+            onClick={(e)=>setModalCartao(true)}
+          >
+            Exibir dados do cartão
+          </Button>
+        </Box>
       </Box>
       
      <Box styleSheet={{display: 'grid',gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginTop: '2.5rem'}}>
       <Box>
           <Text>Plano</Text>
           <InputDash  
-            placeholder="Digite o nome do plano"
+            placeholder="Carregando..."
             type="text"
             disabled={true}
-            value={dadosAssinatura['plan']?.name? dadosAssinatura['plan']?.name: 'Carregando...'}  
+            value={dadosAssinatura['plan']?.name? dadosAssinatura['plan']?.name: ''}  
             onChange={(e)=>setNomeAssinante(e)}
             styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc',
           borderRadius: '1px'}}
@@ -351,22 +503,27 @@ const Settings = () =>{
       <Box>
         <Text>Valor</Text>
         <InputDash 
-          placeholder="R$" 
+          placeholder="Carregando..."
           type="text" 
           disabled={true} 
-          value={dadosAssinatura['amount']?.value? (dadosAssinatura['amount']?.value/100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }): 'Carregando...'} 
+          value={dadosAssinatura['amount']?.value? (dadosAssinatura['amount']?.value/100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }): ''} 
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
         />
       </Box>
       <Box>
         <Text>Status da assinatura</Text>
         <InputDash 
-          placeholder="Digite o e-mail" 
+         placeholder="Carregando..."
           type="text" 
           disabled={true} 
-          value={dadosAssinatura?.['status'] === 'ACTIVE' && 'Ativa' || dadosAssinatura?.['status'] === 'OVERDUE' && 'Em análise'
-          || dadosAssinatura?.['status'] === 'TRIAL' && 'Período Gratuito'? dadosAssinatura?.['status'] === 'ACTIVE' && 'Ativa' || dadosAssinatura?.['status'] === 'OVERDUE' && 'Em análise'
-          || dadosAssinatura?.['status'] === 'TRIAL' && 'Período Gratuito': 'Carregando...'} 
+          value={dadosAssinatura ?
+            dadosAssinatura?.['status'] === 'CANCELED' && 'Cancelado' ||
+            dadosAssinatura?.['status'] === 'ACTIVE' && 'Ativa' ||
+            dadosAssinatura?.['status'] === 'OVERDUE' && 'Pagamento atrasado'||
+            dadosAssinatura?.['status'] === 'TRIAL' && 'Período Gratuito' 
+              :
+            ''
+          } 
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
         />
       </Box>
@@ -381,9 +538,9 @@ const Settings = () =>{
       <Box styleSheet={{width: '100%'}}>
         <Text>Nome</Text>
         <InputDash  
-          placeholder="Digite o nome do assinante"
+          placeholder="Carregando..."
           type="text"
-          value={nomeAssinante? nomeAssinante : 'Carregando...'} 
+          value={nomeAssinante? extrairConteudoAntesDoHifen(nomeAssinante) : ''} 
           onChange={(e)=>setNomeAssinante(e)}
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
         />
@@ -392,10 +549,10 @@ const Settings = () =>{
       <Box styleSheet={{width: '100%'}}>
         <Text>E-mail</Text>
         <InputDash 
-          placeholder="Digite o e-mail"
+           placeholder="Carregando..."
           type="text"
           onChange={(e)=>setEmailAssinante(e)}
-          value={emailAssinante? emailAssinante : 'Carregando...'} 
+          value={emailAssinante? emailAssinante : ''} 
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}/>
       </Box>
 
@@ -403,10 +560,10 @@ const Settings = () =>{
         <Box>
           <Text>Documento</Text>
           <InputDash 
-          placeholder="Digite o documento" 
+          placeholder="Carregando..." 
           onChange={(e)=>formatDocument(e)}
           type="text" 
-          value={formatDocumentValue(documentoAssinante)? formatDocumentValue(documentoAssinante) : 'Carregando...'} 
+          value={formatDocumentValue(documentoAssinante)? formatDocumentValue(documentoAssinante) : ''} 
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}/>
         </Box>
       </Box>
@@ -418,9 +575,9 @@ const Settings = () =>{
         <Box styleSheet={{width: '25%'}}>
           <Text>Data de Nascimento</Text>
           <input  
-            placeholder="Digite o nome do assinante"
+            placeholder="Carregando..."
             type="date"
-            value={dataNascimentoAssinante? dataNascimentoAssinante : 'Carregando...'} 
+            value={dataNascimentoAssinante? dataNascimentoAssinante : ''} 
             onChange={(e)=>setDataNascimentoAssinante(e.target.value)}
             style={{padding: '1rem .5rem', backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}/>
           
@@ -429,9 +586,9 @@ const Settings = () =>{
         <Box styleSheet={{width: '15%'}}>
           <Text>DDD</Text>
           <InputDash 
-            placeholder="(XX)"
+           placeholder="Carregando..."
             type="text"
-            value={dddAssinante? dddAssinante : 'Carregando...'} 
+            value={dddAssinante? dddAssinante : ''} 
             onChange={(e)=>setDddAssinante(e)}
             styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
           />
@@ -441,8 +598,8 @@ const Settings = () =>{
             <Text>Telefone</Text>
             <InputDash 
               onChange={(e)=>setTelefoneAssinante(e)}
-              value={telefoneAssinante? telefoneAssinante : 'Carregando...'} 
-              placeholder="XXXXXXXXXX" 
+              value={telefoneAssinante? telefoneAssinante : ''} 
+              placeholder="Carregando..."
               type="text" 
               styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
             />

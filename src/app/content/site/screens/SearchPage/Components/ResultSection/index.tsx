@@ -30,15 +30,17 @@ export function ResultSection() {
   } = useContext(UserContext);
 
   const handleChangeIdBuffet = (result)=>{
-    console.log(result)
+   
     setIdBuffet(result?.id)
     localStorage.setItem('ID_BUFFET', result?.id);
     router.push(`/${result?.slug}`)
   }
 
   const handlePageChange = (pageNumber) => {
-  setCurrentPage(pageNumber);
+    setCurrentPage(pageNumber);
   };
+
+  console.log(dataBuffet)
 
 
   

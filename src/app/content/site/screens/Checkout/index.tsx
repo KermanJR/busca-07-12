@@ -3,7 +3,7 @@ import Box from "@src/app/theme/components/Box/Box";
 import { useContext, useEffect, useState} from "react";
 import Text from "@src/app/theme/components/Text/Text";
 import Icon from "@src/app/theme/components/Icon/Icon";
-
+import BackModal from '../../../../../../public/assets/images/fundo-login.jpg';
 import Input from "@src/app/theme/components/Input/Input";
 import { useRouter } from "next/router";
 import { ModalContext } from "@src/app/context/ModalContext";
@@ -23,6 +23,7 @@ import { Button as BtnMaterial } from '@mui/material';
 import Button from "@src/app/theme/components/Button/Button";
 import IconVisa from '../../../../../../public/assets/icons/visa.png';
 import IconMastercard from '../../../../../../public/assets/icons/mastercard.png';
+import Confetti from 'react-confetti';
 
 export default function Checkout(){
 
@@ -75,6 +76,8 @@ export default function Checkout(){
     const formatarMoeda = useFormatarMoeda();
     const router = useRouter();
 
+    const [dataAssinatura, setDataAssinatura] = useState([]);
+
 
  
 
@@ -83,21 +86,24 @@ export default function Checkout(){
       isNovoModalOpen,
       closeNovoModal,
       isModalOpenBudget,
-      closeBudgetModal
+      closeBudgetModal,
+      
     } = useContext(ModalContext)
 
     const {
       selectedPlan,
       dataUser,
-      setDataBuffet
+      setDataBuffet,
+      
     } = useContext(UserContext);
 
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showConfirmationModal, setShowConfirmationModal] = useState(true);
     const [messageErrorSignature, setMessageErrorSignature] = useState('');
     const [messageSucessSignature, setMessageSuccessSignature] = useState('');
     const [showNegationModal, setShowNegationModal] = useState(false);
 
     const [valorPlanoBasico, setValorPlanoBasico] = useState(null);
+    const [mostrarConfetes, setMostrarConfetes] = useState(true);
 
     function ConfirmationModal() {
       return (
@@ -108,18 +114,23 @@ export default function Checkout(){
             left: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Sobreposição escura
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Sobreposição escura,
+          
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             zIndex: 999, // Garanta que esteja na parte superior
           }}
         >
+          {/*mostrarConfetes && <Confetti />*/}
           <Box styleSheet={{
             backgroundColor: 'white',
             borderRadius: '8px',
-            height: '300px',
-            width: '50%'
+            height: 'auto',
+            width: '50%',
+            padding: '1rem 0',
+            background: `URL(${BackModal.src})`,
+            backgroundPositionY: '-15rem'
           }}>
 
          <Button
@@ -138,32 +149,62 @@ export default function Checkout(){
             marginBottom: '0rem',
             position: 'relative',
             alignSelf: 'end',
-            marginTop: '1rem',
+            marginTop: '0rem',
             marginRight: '1rem',
-            boxShadow: '0.5px 1px 3px 1px #969BA0'
+           
           }}
         
         >
           X
         </Button>
+
+        <Text  
+          color={theme.colors.neutral.x000}
+          styleSheet={{
+            fontSize: '2rem',
+            fontWeigth: '700',
+            width: '80%',
+            margin: '.5rem auto',
+            display:' flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textTransform: 'uppercase'
+          }}>
+            Assinatura Concluída!
+            
+         </Text>
+
+         <Box 
+          styleSheet={{
+            backgroundColor: theme.colors.neutral.x200,
+            borderRadius: '5px',
+             padding: '1rem 2rem 1.5rem 2rem',
+             width: '80%',
+             margin: '1rem auto'
+          }}>
+
+          <Text color={theme.colors.neutral.x999} styleSheet={{padding: '.5rem 0' ,fontSize: '.975rem', fontWeigth: '500', width: '100%'}}>
+              Informações do Plano
+          </Text>
+          <Box tag="ul">
+            <Box tag="li">Nome: {dataAssinatura?.['plan']?.name}</Box>
+            <Box tag="li">Valor: {(dataAssinatura['amount']?.value/100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Box>    
+            <Box tag="li">Período gratuito: {new Date(dataAssinatura?.['trial']?.start_at).toLocaleDateString()} à {new Date(dataAssinatura?.['trial']?.end_at).toLocaleDateString()}</Box>
+          </Box>
+
         
-         <Text  color={theme.colors.primary.x500} styleSheet={{fontSize: '1rem', fontWeigth: '700', width: '80%', margin: '-1rem auto', display:' flex', flexDirection: 'row', height: '60%',justifyContent: 'center', alignItems: 'center', marginTop: '-2rem'}}>
-            {name && name}, sua assinatura está em análise!
-            
-         </Text>
+          <Box tag="li">A cobrança da primera fatura será efetuada após o período de teste.</Box>
 
-         <Text  color={theme.colors.primary.x500} styleSheet={{fontSize: '1rem', fontWeigth: '700', width: '80%', textAlign: 'center',margin: '-1rem auto', display:' flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '-2rem'}}>
           
-            Aproveite os benefícios de escolher a Busca Buffet e faça seu negócio ser visto por milhares de pessoas em nossa plataforma.
-            
-         </Text>
-
-         <Text onClick={(e)=>router.push('/dashboard/buffet')} color={theme.colors.secondary.x500} styleSheet={{cursor: 'pointer', textAlign: 'center',marginTop: '1rem', fontSize: '.875rem', fontWeigth: '700', width: '80%', margin: '2rem auto', display:' flex', flexDirection: 'row', height: 'auto',justifyContent: 'center', alignItems: 'center'}}>
-            Ir para o dashboard <Text styleSheet={{cursor: 'pointer',fontSize: '1.4rem', marginLeft: '.7rem'}} color={theme.colors.secondary.x500} >{`>`}</Text>
-         </Text>
+         </Box>
+        
+         <Text onClick={(e)=>router.push('/dashboard/buffet')} color={theme.colors.secondary.x500} styleSheet={{cursor: 'pointer', textAlign: 'center',marginTop: '1rem', fontSize: '.875rem', fontWeigth: '700', width: '80%', margin: '0rem auto', display:' flex', flexDirection: 'row', height: 'auto',justifyContent: 'center', alignItems: 'center'}}>
+              Ir para o dashboard <Text styleSheet={{cursor: 'pointer',fontSize: '1.4rem', marginLeft: '.7rem'}} color={theme.colors.secondary.x500} >{`>`}</Text>
+          </Text>
          
          </Box>
-          </Box>
+        </Box>
         
       );
     }
@@ -238,7 +279,7 @@ export default function Checkout(){
     };
 
    async function handleSubmit(e){
-    setIsLoading(true)
+      setIsLoading(true)
       e.preventDefault();
       const data = {
           "plan": {
@@ -247,7 +288,7 @@ export default function Checkout(){
             window?.localStorage?.getItem('ID_PLAN') == '3' && 'PLAN_7EAED016-3CC9-45C9-8FAE-B145B55BA1C3' 
           },
           "customer": {
-            "name": nomeAssinante,
+            "name": nomeAssinante + '-' + dataUser?.['entidade']?.nome,
             "email": emailAssinante,
             "tax_id": removeMask(documentoAssinante),
             "billing_info": [
@@ -268,7 +309,8 @@ export default function Checkout(){
                 "number": removeWhiteSpace(telefoneAssinante)
                 }
             ],
-          "birth_date": dataNascimentoAssinante
+          "birth_date": dataNascimentoAssinante,
+
           },
           "amount": {
             "currency": "BRL",
@@ -283,7 +325,7 @@ export default function Checkout(){
             "hold_setup_fee": false,
             "days": 90
           },
-          "reference_id": "00005",
+          "reference_id": "0005",
           "payment_method": [
             {
               "type": "CREDIT_CARD",
@@ -295,7 +337,6 @@ export default function Checkout(){
             }
           ]
         }
-
       PagBankService.createCustomerAndSubscription({data})
         .then(async res=>{
           if(res?.error_messages){
@@ -303,10 +344,11 @@ export default function Checkout(){
           }
           else {
             if(res?.status === 'TRIAL'){
-             //await EditSignatureBuffet(res?.id, res?.status);
+              setDataAssinatura(res)
+          
               await createSignatureBuffet(res);
               setShowConfirmationModal(true)
-              //EditBuffet()
+              
               setSuccessPedido(true)
             
             }
@@ -320,6 +362,8 @@ export default function Checkout(){
         }, 3000)
        
     }
+
+    
 
     const formatPhoneNumber = (input) => {
       // Remove todos os caracteres não numéricos
@@ -345,7 +389,7 @@ export default function Checkout(){
     };
 
     const formatCreditCardExpiration = (input) => {
-      console.log(input)
+
       // Remove todos os caracteres não numéricos
       const cleaned = input.replace(/\D/g, '');
     
@@ -494,7 +538,11 @@ export default function Checkout(){
     }
       PagBankService.createSignatureInBuffet(data)
         .then(res=>{
-          console.log(res)
+
+          setMostrarConfetes(true);
+          setTimeout(() => {
+            setMostrarConfetes(false);
+          }, 3000); 
         }).catch(err=>{
           console.log(err)
         })
@@ -518,6 +566,8 @@ export default function Checkout(){
     if(typeof window !== 'undefined'){
       name = window?.localStorage?.getItem('USER_NAME');
     }
+
+    
    
  
     return(
@@ -537,7 +587,7 @@ export default function Checkout(){
             <ModalBudget isOpen={isModalOpenBudget} onClose={closeBudgetModal} />
           )}  
             {showConfirmationModal && <ConfirmationModal />}
-          
+            
 
           <Box styleSheet={{
               display:'flex',
@@ -906,9 +956,21 @@ export default function Checkout(){
                       borderRadius: '6px',
                     }}
                   />
-                <Text variant="body1" styleSheet={{textAlign: 'left', padding: '1.5rem 0'}} color={theme.colors.neutral.x000}>
+                <Text variant="body1" styleSheet={{textAlign: 'left', paddingTop: '1rem'}} color={theme.colors.neutral.x000}>
                   INFORMAÇÕES DO CARD
                 </Text>
+              
+                  <Box tag="ul" styleSheet={{paddingBottom: '1rem'}}>
+                    {selectedPlan?.['tags']?.map(item=>{
+                      return <Box tag="li">
+                        <Text color={theme.colors.neutral.x000} styleSheet={{fontWeight: '400'}}>
+                          - {item};
+                        </Text>
+                     </Box>
+                    })}
+                   
+                  </Box>
+              
                 <Text styleSheet={{color: theme.colors.neutral.x050, fontWeight: '500'}}>A cobrança da primeira fatura será efetuada após o período de teste.</Text>
                 <Box styleSheet={{
                   backgroundColor: theme.colors.primary.x600,
@@ -923,7 +985,7 @@ export default function Checkout(){
                   
                   <Icon name="default_icon" fill={theme.colors.neutral.x000}/>
                   <Box styleSheet={{display: 'flex', flexDirection: 'row', gap: '.4rem', flexWrap: 'wrap'}}>
-                    <Text variant="body1" styleSheet={{textAlign: 'left', width: '95%'}} color={theme.colors.neutral.x000}>
+                    <Text variant="body1" styleSheet={{textAlign: 'left', width: '85%', flexWrap: 'wrap'}} color={theme.colors.neutral.x000}>
                       Ao contratar nossos serviços, você concorda com o 
                     </Text>
                     

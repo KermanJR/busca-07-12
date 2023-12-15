@@ -160,10 +160,10 @@ export default class PagBankService {
 
 
   //Cancelar assinatura
-  static async cancelSignaturePagBankById(id, data): Promise<any> {
+  static async cancelSignaturePagBankById(id): Promise<any> {
     const url = `${API_URL_BUSCABUFFET}/pagamentos/pagbank?resource=subscriptions/${id}/cancel`;
     try {
-      const response = await axios.put(url, data,{
+      const response = await axios.put(url,{
         headers: {
           Authorization: `Bearer ${apiPagBankKey}`,
         },
@@ -171,7 +171,7 @@ export default class PagBankService {
   
       return response.data;
     } catch (error) {
-      console.error('Erro ao suspender assinante com plano:', error);
+      console.error('Erro ao cancelar assinante com plano:', error);
       throw error;
     }
   }

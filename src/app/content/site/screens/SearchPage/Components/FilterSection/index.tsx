@@ -62,6 +62,8 @@ export function FilterSection() {
     if(!selectedCategory){
       BuffetService.showBuffets()
       .then(res=>{
+
+        console.log(res)
         const filteredBuffets = res.filter((buffet) => {
           const categoriaFiltro = buffet?.categorias.map((categoria) => categoria.categoria?.nome) || [];
           const cidadeBuffet = buffet?.entidade?.enderecos[0]?.endereco?.cidade?.nome;
@@ -110,7 +112,7 @@ useEffect(() => {
       // Filtrar buffets com base no campo "status"
       const statusFiltro = 'A'; // Altere isso para o status desejado (por exemplo, 'A' para ativo)
       const buffetsAtivos = res.filter((buffet) => buffet.status === statusFiltro &&
-      buffet?.entidade?.assinaturas[0]?.status === "ACTIVE")
+      buffet?.entidade?.assinaturas[0]?.status === "TRIAL" &&  buffet?.status === "A")
 
       // Separe os buffets "Premium" e outros
       const premiumBuffets = buffetsAtivos.filter(

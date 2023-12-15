@@ -53,6 +53,7 @@ const Homedash = () =>{
 
   const [statusBuffet, setStatusBuffet] = useState('I');
   const [valorPlanoBasico, setValorPlanoBasico] = useState(null);
+  const [dadosAssinatura, setDadosAssinatura] = useState(null);
   
   const {
     orderByGrowing,
@@ -211,8 +212,30 @@ const Homedash = () =>{
  
  
 
- 
+  useEffect(() => {
+    BuffetService.showSignaturesById(dataUser['entidade'].id)
+    .then(res=>{
+      console.log(res)
+      let id = JSON.parse(res[0]?.tipo)
+      getSignature(id?.id)
+    }).catch(err=>{
+      console.log(err)
+    })
 
+  }, []);
+
+  function getSignature(id){
+    PagBankService.getSignaturesPagBankById(id)
+    .then(res=>{
+      console.log(res)
+      setDadosAssinatura(res)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+
+
+  console.log(dadosAssinatura)
 
   return(
     <Box styleSheet={{height: 'auto'}}>
@@ -264,7 +287,7 @@ const Homedash = () =>{
             <Image src={DolarYellowImage.src} alt="Ícone de arquivo"/>
           </Box>
 
-          {statusBuffet === 'A' && dataBuffet?.['galerias']?.length > 0 &&(
+          {statusBuffet === 'A' && dataBuffet?.['galerias']?.length > 0 && dadosAssinatura?.status == 'TRIAL' &&(
             <Box styleSheet={{width: '90%'}}>
             <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
             <p  style={{width: '80%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}>
@@ -287,7 +310,16 @@ const Homedash = () =>{
           </Box>
           )}
 
-{statusBuffet === 'A' && dataBuffet?.['galerias']?.length == 0 &&(
+        {statusBuffet === 'A' && dataBuffet?.['galerias']?.length > 0 && dadosAssinatura?.status == 'ACTIVE' &&(
+            <Box styleSheet={{width: '90%'}}>
+            <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
+            <p  style={{width: '80%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}>
+             Nenhum aviso 
+            </p>
+          </Box>
+          )}
+
+          {statusBuffet === 'A' && dataBuffet?.['galerias']?.length == 0 &&(
             <Box styleSheet={{width: '70%'}}>
             <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
             <Text color={theme.colors.neutral.x000}>Por favor, insira as imagens do seu Buffet para ativá-lo e 
@@ -297,7 +329,17 @@ const Homedash = () =>{
           </Box>
           )}
 
-        {statusBuffet === 'I' && (
+        {statusBuffet === 'I' && dadosAssinatura?.status == 'TRIAL'  &&(
+            <Box styleSheet={{width: '70%'}}>
+            <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
+            <Text color={theme.colors.neutral.x000}>Por favor, preencha as informações e insira as imagens do seu Buffet para ativá-lo e 
+              torna-lo visível ao público.
+            </Text>
+         
+          </Box>
+          )}
+
+{statusBuffet === 'I' &&dadosAssinatura?.status == 'ACTIVE'  &&(
             <Box styleSheet={{width: '70%'}}>
             <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
             <Text color={theme.colors.neutral.x000}>Por favor, preencha as informações e insira as imagens do seu Buffet para ativá-lo e 
@@ -309,14 +351,22 @@ const Homedash = () =>{
 
           {statusBuffet === 'P' && (
             <Box styleSheet={{width: '70%'}}>
-            <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
+              <Text variant="heading3Bold" tag="p" color={theme.colors.neutral.x000}>Aviso</Text>
+              <p style={{width: '90%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}> 
+                  Seus dias de avaliação acabaram, não perca a oportunidade de continuar desfrutando de todos os benefícios! 
+                  Assine em <label style={{display: 'inline-block'}}><a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
+              </p>
+            </Box>
+          )}
+
+          {dadosAssinatura?.status == 'CANCELED' && statusBuffet === 'I' &&(
+            <Box styleSheet={{width: '70%'}}>
+            <Text variant="heading3Bold" tag="h3" color={theme.colors.neutral.x000}>Aviso</Text>
             <p style={{width: '90%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}> 
-                Seus dias de avaliação acabaram, não perca a oportunidade de continuar desfrutando de todos os benefícios! 
-                Assine em <label style={{display: 'inline-block'}}><a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
+                Seu plano foi cancelado, você tem até o dia {new Date(dadosAssinatura?.trial?.end_at).toLocaleDateString()} 
+                {' ' } para continuar usuafruindo do Busca Buffet! Renove sua assinatura em <a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a>.
             </p>
-           
-         
-          </Box>
+            </Box>
           )}
           
         </BoxDash>

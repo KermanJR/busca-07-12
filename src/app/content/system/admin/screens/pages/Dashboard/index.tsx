@@ -35,6 +35,7 @@ const Homedash = () =>{
   const [currentPage, setCurrentPage] = useState(1);
   const elementsPerPage = 5; // Define o número de elementos por página
   
+  const [assinaturasPagBank, setAssinaturasPagBank] = useState([]);
 
   const {
     orderByGrowing,
@@ -43,8 +44,9 @@ const Homedash = () =>{
     orderByDateDescending,
     orderByStringGrowing,
     orderByStringDescending
-    } = useFilterFunctions({hook: viewPayments, setHook: setViewPayments})
-    const [totalPaymentsYear, setTotalPaymentsYear] = useState(0)
+  } = useFilterFunctions({hook: viewPayments, setHook: setViewPayments});
+
+  const [totalPaymentsYear, setTotalPaymentsYear] = useState(0)
   const [totalPaymentsMonth, setTotalPaymentsMonth] = useState(0)
   const [totalPaymentsCancel, setTotalPaymentsCancel] = useState(0)
 
@@ -59,6 +61,9 @@ const Homedash = () =>{
       setTotalUsers(result[3].total)
       setLoading(true)
 
+      console.log(viewPayments)
+
+    
       let totalYearPayments = 0
       let totalmonthPayments = 0
       let totalCancelPayments = 0
@@ -85,10 +90,9 @@ const Homedash = () =>{
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-
   };
   
-  function calcularDataExpiracao(dataString) {
+  /*function calcularDataExpiracao(dataString) {
     // Verifica se a dataString é fornecida
     if (!dataString) {
       return 'Data inválida';
@@ -112,14 +116,34 @@ const Homedash = () =>{
     const ano = dataExpiracao.getFullYear();
   
     return `${dia}/${mes}/${ano}`;
+  }*/
+
+  const extrairValorAposHifen = (nome) => {
+    const partes = nome.split('-');
+    
+    if (partes.length >= 2) {
+      const valorAposHifen = partes[1].trim();
+      return valorAposHifen;
+    }
   }
+
+  const formatarValor = (valor) => {
+    const valorString = valor.toString();
+    const reais = valorString.slice(0, -2) || '0';
+    const centavos = valorString.slice(-2);
+    const valorFormatado = `R$ ${reais},${centavos}`;
+    return valorFormatado;
+  };
+    
+      
+  
 
   useEffect(()=>{
     PagBankService.getSignaturesPagBankById(viewPayments.map(item=>{
       item
     }))
     .then(res=>{
-      console.log(res);
+      setAssinaturasPagBank(res?.subscriptions);
     })
   }, [])
   
@@ -255,15 +279,15 @@ const Homedash = () =>{
           </TableHead>
 
           <TableBody>
-            {viewPayments?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
+            {assinaturasPagBank?.slice((currentPage - 1) * elementsPerPage, currentPage * elementsPerPage)
           ?.map((item, index)=>(
               <TableRow key={index} styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: 'none'}}>
-                <TableCell>{item?.['id']}</TableCell>
-                <TableCell >{new Date(item?.['updated_at']).toLocaleDateString()}</TableCell>
-                <TableCell>{calcularDataExpiracao(item?.['updated_at'])}</TableCell>
-                <TableCell>{item?.['entidade']['nome']}</TableCell>
-                <TableCell>R$ {item?.['valor']}</TableCell>
-                <TableCell>R$ {item?.['desconto']}</TableCell>
+                <TableCell>{index}</TableCell>
+                <TableCell >{new Date(item?.trial?.start_at).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(item?.trial?.end_at).toLocaleDateString()}</TableCell>
+                <TableCell>{item?.customer?.name != ''? extrairValorAposHifen(item?.customer?.name): "Não Preenchido"}</TableCell>
+                <TableCell>{formatarValor(item?.amount?.value)}</TableCell>
+                <TableCell>{0}</TableCell>
 
                 {item?.status === 'TRIAL' && (
                   <Box tag="td"
@@ -315,7 +339,7 @@ const Homedash = () =>{
                   }}    
                 >
                   <Text styleSheet={{
-                      backgroundColor: theme.colors.negative.x600,
+                      color: theme.colors.neutral.x000,
                       textAlign: 'center'
                     }}
                   >
@@ -351,7 +375,7 @@ const Homedash = () =>{
           </TableBody>
         </Box>
       </Box>
-      <Pagination currentPage={currentPage} qtdElements={payments.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
+      <Pagination currentPage={currentPage} qtdElements={assinaturasPagBank.length} elementsPerPage={elementsPerPage} onPageChange={handlePageChange}/>
     </Box>
   )
 }
