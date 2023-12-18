@@ -15,7 +15,8 @@ interface InputProps {
   name?: string;
   checked?: boolean;
   disabled?: boolean;
-  id?: string
+  id?: string;
+  maxLength?: string;
 }
 
 

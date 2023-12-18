@@ -142,23 +142,13 @@ const Settings = () =>{
        <Text styleSheet={{fontSize: '1.4rem'}}>Dados do Cartão</Text>
        <Box styleSheet={{display: 'grid',gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginTop: '1rem'}}>
         
-       <Box>
-        <Text>Nome vinculado ao cartão</Text>
-        <InputDash 
-          placeholder="Digite o nome"
-          type="text"
-          onChange={(e)=>setNomeAssinante(e)}
-          defaultValue={dadosAssinatura? 
-            dadosAssinatura?.['payment_method'][0]?.card?.holder?.name: ''} 
-            styleSheet={{backgroundColor: theme.colors.neutral.x200}}
-          />
-      </Box>
+       
       <Box>
           <Text>Data Nascimento</Text>
           <InputDash  
             placeholder="Digite o número"
             type="text"
-            defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
+            defaultValue={dadosAssinatura['payment_method'][0]? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
             onChange={(e)=>setNumberCard(e)}
             styleSheet={{backgroundColor: theme.colors.neutral.x200}}
           />
@@ -168,38 +158,13 @@ const Settings = () =>{
           <InputDash  
             placeholder="Digite o número"
             type="text"
-            defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
+            defaultValue={dadosAssinatura['payment_method'][0]? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
             onChange={(e)=>setNumberCard(e)}
             styleSheet={{backgroundColor: theme.colors.neutral.x200}}
           />
       </Box>
-      <Box>
-          <Text>N° Cartão</Text>
-          <InputDash  
-            placeholder="Digite o número"
-            type="text"
-            defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0]?.card?.first_digits + 'XXXXXX': ''}  
-            onChange={(e)=>setNumberCard(e)}
-            styleSheet={{backgroundColor: theme.colors.neutral.x200}}
-          />
-      </Box>
-      <Box>
-        <Text>Data de expiração</Text>
-        <InputDash 
-          placeholder="Digite a data"
-          type="text" 
-          onChange={(e)=>setExpirationCard(e)}
-          defaultValue={dadosAssinatura? dadosAssinatura['payment_method'][0].card?.exp_month+'/'+dadosAssinatura['payment_method'][0].card?.exp_year: ''} styleSheet={{backgroundColor: theme.colors.neutral.x200}}/>
-      </Box>
-      <Box>
-        <Text>Código de Segurança</Text>
-        <InputDash 
-          placeholder="CVV" 
-          onChange={(e)=>setCvvCard(e)}
-          type="text" 
-          value={cvvCard}
-          styleSheet={{backgroundColor: theme.colors.neutral.x200}}/>
-      </Box>
+     
+      
       
         </Box>
 
@@ -284,8 +249,12 @@ const Settings = () =>{
         }
        
        
-       {responseCancel == false?   <Text styleSheet={{textAlign: 'center', padding: '1rem'}}>Deseja realmente cancelar sua assinatura do plano { dadosAssinatura['plan']?.name}? </Text>: ''
+       {responseCancel == false?   
+        <Text styleSheet={{textAlign: 'center', padding: '1rem'}}>
+          Deseja realmente cancelar sua assinatura do plano { dadosAssinatura['plan']?.name}? 
+        </Text>: ''
        }
+       
      
         
         {responseCancel == true && (
@@ -340,7 +309,6 @@ const Settings = () =>{
   function getSignature(id){
     PagBankService.getSignaturesPagBankById(id)
     .then(res=>{
-      console.log(res)
       setCodeCustomer(res?.customer?.id)
       setDadosAssinatura(res)
     }).catch(err=>{
@@ -443,6 +411,8 @@ const Settings = () =>{
     })
   }
 
+  console.log(dadosAssinante)
+  console.log(dadosAssinatura)
 
 
   return(
@@ -457,36 +427,35 @@ const Settings = () =>{
       padding: '2rem',
     }}>
 
-    {modalCartao && <ConfirmationModal />}
     {cancelModal && <CancelModal />}
 
       <Box styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Box>
           <Text styleSheet={{fontSize: '1.3rem'}}>Plano de Assinatura Atual</Text>
+          Aproveite até {new Date(dadosAssinatura?.['trial']?.end_at).toLocaleDateString()}
         </Box>
 
         <Box styleSheet={{display: 'flex', flexDirection: 'row', gap: '2rem'}}>
-          <Button 
-            disabled={dadosAssinatura?.['status'] === 'CANCELED'? true: false}
-            type="button" 
-            variant="outlined" 
-            styleSheet={{position: 'relative', right: '0'}} 
-            colorVariant="negative" 
-            onClick={(e)=>setCancelModal(true)}
-          >
-            Cancelar assinatura
-          </Button>
-          <Button 
-            type="button"
-            variant="outlined"
-            styleSheet={{position: 'relative', right: '0'}}
-            onClick={(e)=>setModalCartao(true)}
-          >
-            Exibir dados do cartão
-          </Button>
+          {dadosAssinatura?.['status'] != 'CANCELED' ? (
+            <Button 
+              disabled={dadosAssinatura?.['status'] === 'CANCELED'? true: false}
+              type="button" 
+              variant="outlined" 
+              styleSheet={{position: 'relative', right: '0'}} 
+              colorVariant="negative" 
+              onClick={(e)=>setCancelModal(true)}
+            >
+              Cancelar assinatura
+            </Button>
+          ): <></>
+        }
+          
+  
+       
         </Box>
+       
       </Box>
-      
+    
      <Box styleSheet={{display: 'grid',gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginTop: '2.5rem'}}>
       <Box>
           <Text>Plano</Text>
@@ -522,7 +491,7 @@ const Settings = () =>{
             dadosAssinatura?.['status'] === 'OVERDUE' && 'Pagamento atrasado'||
             dadosAssinatura?.['status'] === 'TRIAL' && 'Período Gratuito' 
               :
-            ''
+              'Carregando...'
           } 
           styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
         />
@@ -605,10 +574,59 @@ const Settings = () =>{
             />
         </Box>
       </Box>
-     </Box>
-    
-     <Button styleSheet={{marginTop: '2rem'}} >Salvar</Button>
 
+      
+      <Text styleSheet={{fontSize: '1.3rem', marginTop: '.8rem'}}>Dados do pagamento</Text>
+      <Box styleSheet={{ display: 'flex', flexDirection: 'row',  justifyContent: 'left', gap: '2rem'}}>
+        <Box>
+          <Text>Nome vinculado ao cartão</Text>
+          <InputDash 
+               placeholder="Carregando..."
+            type="text"
+            onChange={(e)=>setNomeAssinante(e)}
+            value={dadosAssinatura?.['payment_method']?.[0]? 
+              dadosAssinatura?.['payment_method']?.[0]?.card?.holder?.name: nomeAssinante} 
+              styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
+            />
+        </Box>
+
+        <Box>
+            <Text>N° Cartão</Text>
+            <InputDash  
+                placeholder="Carregando..."
+              type="text"
+              value={dadosAssinatura['payment_method']?.[0]? dadosAssinatura['payment_method']?.[0]?.card?.first_digits + 'XXXXXX': numberCard}  
+              onChange={(e)=>setNumberCard(e)}
+              styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
+            />
+        </Box>
+        <Box>
+          <Text>Data de expiração</Text>
+          <InputDash 
+              placeholder="Carregando..."
+            type="text" 
+            maxLength={7}
+            onChange={(e)=>setExpirationCard(e)}
+            value={dadosAssinatura['payment_method']?.[0]? dadosAssinatura['payment_method']?.[0].card?.exp_month+'/'+dadosAssinatura['payment_method'][0].card?.exp_year: expirationCard} 
+            styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}
+            />
+        </Box>
+        <Box styleSheet={{width: '15%'}}>
+        <Text>Cód. Segurança</Text>
+        <InputDash 
+             placeholder="cvv"
+          onChange={(e)=>setCvvCard(e)}
+          type="text" 
+          value={cvvCard}
+          styleSheet={{backgroundColor: theme.colors.neutral.x000, borderBottom: '1px solid #ccc', borderRadius: '1px'}}/>
+      </Box>
+            </Box>
+
+     </Box>
+     {dadosAssinatura?.['status'] == 'CANCELED' ? (
+ <Button styleSheet={{marginTop: '2rem'}} colorVariant="positive">Reativar minha assinatura</Button>
+     ): <></>}
+    
     </Box>
   )
 }

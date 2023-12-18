@@ -154,7 +154,7 @@ export default function Plans(){
               </Box>
               <Button styleSheet={{alignSelf: 'center', marginTop: 'auto', width: '100%', padding: '1rem'}} size="lg" fullWidth onClick={(e)=>navigateCheckout(dataPlans[0], 1)}>CONTINUAR</Button>
           </Box>
-          <Box styleSheet={{boxShadow: `0px 4px 4px 0px ${theme.colors.neutral.x050}`, width: !(size < 1100) ? '30vw' : (!(size < 380) ? '23.5625rem' : '100vw'), maxWidth: '23.5625rem', height: '33.6875rem', borderRadius: '1.25rem', padding: '2rem', border: `1px solid ${theme.colors.primary.x1000}`}}>
+          <Box styleSheet={{boxShadow: `0px 4px 4px 0px ${theme.colors.neutral.x050}`, width: !(size < 1100) ? '30vw' : (!(size < 380) ? '23.5625rem' : '100vw'), maxWidth: '23.5625rem', height: 'auto', borderRadius: '1.25rem', padding: '2rem', border: `1px solid ${theme.colors.primary.x1000}`}}>
                 <Text color={theme.colors.neutral.x999}>Standard</Text>
                 <Box styleSheet={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '1rem'}}>
                   <Text variant="heading3Bold" color={theme.colors.neutral.x999}>{formatarMoeda(dataPlans[1]?.valor_mensal)}</Text>
@@ -173,15 +173,14 @@ export default function Plans(){
               </Box>
               <Button styleSheet={{alignSelf: 'center', marginTop: 'auto', width: '100%', padding: '1rem'}} size="lg" colorVariant="secondary" onClick={(e)=>navigateCheckout(dataPlans[1], 2)}>CONTINUAR</Button>
             </Box>
-            <Box styleSheet={{boxShadow: `0px 4px 4px 0px ${theme.colors.neutral.x050}`, width: !(size < 1100) ? '30vw' : (!(size < 380) ? '23.5625rem' : '100vw'), maxWidth: '23.5625rem', height: '33.6875rem', borderRadius: '1.25rem', padding: '2rem'}}>
+            <Box styleSheet={{boxShadow: `0px 4px 4px 0px ${theme.colors.neutral.x050}`, width: !(size < 1100) ? '30vw' : (!(size < 380) ? '23.5625rem' : '100vw'), maxWidth: '23.5625rem', height: 'auto', borderRadius: '1.25rem', padding: '2rem'}}>
                 <Text color={theme.colors.neutral.x999}>Premium</Text>
                 <Box styleSheet={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '1rem'}}>
                   <Text variant="heading3Bold" color={theme.colors.neutral.x999}>{formatarMoeda(dataPlans[2]?.valor_mensal)}</Text>
                   <Text color={theme.colors.neutral.x400} variant="body2">/mês</Text>
                 </Box>
-             {/*<Text color={theme.colors.neutral.x999} styleSheet={{padding: '1rem 0'}}>Total de {formatarMoeda(dataPlans[2]?.valor_anual)}</Text>*/}
+         
                 <Box tag="ul" styleSheet={{marginTop: '1rem'}}>
-
                   {dataPlans[2]?.tags?.map((element, index) => (
                     <Box tag="li" key={index} 
                     styleSheet={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '.5rem 0'}}>

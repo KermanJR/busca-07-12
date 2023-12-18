@@ -27,6 +27,8 @@ import MapModal from "../SearchPage/Components/ModalMaps";
 import GeolocalizationMapsService from "@src/app/api/GeolocalizationMapsService";
 import { Relacionados } from "./Components/Relacionados";
 import WhatsAppButton from "../HomeScreen/Components/WhatsappButton";
+import { FaCheck } from "react-icons/fa6";
+
 
 export default function SinglePageBuffet(slug){
   const {
@@ -220,7 +222,7 @@ export default function SinglePageBuffet(slug){
                     {details?.['sobre']}
                   </Text>
 
-                  {/*Principais atrações*/}
+                  {/*Principais comodidades*/}
                   <Box tag="div">
                     <Text tag="h3" variant="heading3semiBold" 
                       styleSheet={{
@@ -240,7 +242,7 @@ export default function SinglePageBuffet(slug){
                       {attractions?.map((nome, index)=>{
                           return(
                               <Box styleSheet={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem', padding: '1rem 0'}}>
-                               <Image src={IconCheckTemplate.src} alt=""/>
+                               <FaCheck/>
                                 <Text styleSheet={{wordWrap: 'break-word'}} variant="btnRegular">{nome}</Text>
                               </Box>
                           )

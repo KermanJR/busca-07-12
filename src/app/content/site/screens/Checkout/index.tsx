@@ -97,7 +97,7 @@ export default function Checkout(){
       
     } = useContext(UserContext);
 
-    const [showConfirmationModal, setShowConfirmationModal] = useState(true);
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [messageErrorSignature, setMessageErrorSignature] = useState('');
     const [messageSucessSignature, setMessageSuccessSignature] = useState('');
     const [showNegationModal, setShowNegationModal] = useState(false);
@@ -177,7 +177,7 @@ export default function Checkout(){
 
          <Box 
           styleSheet={{
-            backgroundColor: theme.colors.neutral.x200,
+            backgroundColor: theme.colors.neutral.x000,
             borderRadius: '5px',
              padding: '1rem 2rem 1.5rem 2rem',
              width: '80%',
@@ -261,6 +261,22 @@ export default function Checkout(){
       setCypherCard(encrypted)
       return encrypted;
     }
+
+    const formataDataExpiracao = (event) => {
+      const inputText = event;
+  
+      // Remove caracteres não numéricos
+      const numericValue = inputText.replace(/\D/g, '');
+  
+      // Adiciona uma barra após os primeiros dois caracteres
+      const formattedValue = numericValue.replace(/(\d{2})(\d{0,4})/, '$1/$2');
+  
+      // Limita o comprimento total para 7 caracteres
+      const truncatedValue = formattedValue.slice(0, 7);
+  
+      // Atualiza o estado
+      setExpirationCard(truncatedValue);
+    };
 
 
 
@@ -388,30 +404,10 @@ export default function Checkout(){
       return input.replace(/\s/g, '');
     };
 
-    const formatCreditCardExpiration = (input) => {
-
-      // Remove todos os caracteres não numéricos
-      const cleaned = input.replace(/\D/g, '');
-    
-      // Garante que tenha no máximo 6 dígitos
-      const truncated = cleaned.slice(0, 6);
-    
-      // Verifica se há pelo menos 2 dígitos para formatar
-      if (truncated.length >= 2) {
-        // Aplica a máscara para formatar a data de validade do cartão de crédito
-        const formatted = truncated.replace(/(\d{2})(\d{0,4})/, '$1/$2');
-    
-        // Define o estado ou faça o que quiser com a data formatada
-        setExpirationCard(formatted);
-      } else {
-        // Se não houver dígitos suficientes, define como vazio (ou outra lógica desejada)
-        setExpirationCard('');
-      }
-    };
 
     const handleChangeExpiration = (e) => {
       // Chama a função de formatação e passa o valor atual do input
-      formatCreditCardExpiration(e);
+      formataDataExpiracao(e);
     };
 
     const formatCreditCardCvv = (input) => {
@@ -816,7 +812,7 @@ export default function Checkout(){
                       <Input 
                       type="text"
                       onChange={(e)=>handleChangeExpiration(e)}
-              
+                      maxLength="7"
                       required={true}
                       disabled={successPedido}
                       placeholder="MM/AAAA"
@@ -1056,7 +1052,7 @@ export default function Checkout(){
                                       &&
                                       'Número do documento inválido, verifique e tente novamente.'
                                     }
-                                    {item?.parameter_name === 'phones[0].number' ||
+                                    {item?.parameter_name === 'phones[0].number' && 
                                     item?.description === 'The phone number is incorrect. It must not be in blank and it must contain only digits. Special characters are not accepted.' 
                                     || item?.description === 'The phone number is too long. It must contain 9 digits.' 
                                     &&

@@ -213,7 +213,7 @@ const Homedash = () =>{
  
 
   useEffect(() => {
-    BuffetService.showSignaturesById(dataUser['entidade'].id)
+    BuffetService.showSignaturesById(dataUser['entidade']?.id)
     .then(res=>{
       console.log(res)
       let id = JSON.parse(res[0]?.tipo)
@@ -235,7 +235,7 @@ const Homedash = () =>{
   }
 
 
-  console.log(dadosAssinatura)
+
 
   return(
     <Box styleSheet={{height: 'auto'}}>
@@ -360,11 +360,12 @@ const Homedash = () =>{
           )}
 
           {dadosAssinatura?.status == 'CANCELED' && statusBuffet === 'I' &&(
-            <Box styleSheet={{width: '70%'}}>
+            <Box styleSheet={{width: '82%'}}>
             <Text variant="heading3Bold" tag="h3" color={theme.colors.neutral.x000}>Aviso</Text>
             <p style={{width: '90%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}> 
                 Seu plano foi cancelado, você tem até o dia {new Date(dadosAssinatura?.trial?.end_at).toLocaleDateString()} 
-                {' ' } para continuar usuafruindo do Busca Buffet! Renove sua assinatura em <a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a>.
+                {' ' } para continuar usufruindo do Busca Buffet! Escolha uma nova assinatura em <a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos
+                </a> ou reative-a na seção Assinaturas.
             </p>
             </Box>
           )}

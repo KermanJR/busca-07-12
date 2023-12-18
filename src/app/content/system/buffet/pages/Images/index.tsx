@@ -12,6 +12,7 @@ import MockImage1 from 'public/assets/images/mock_image.jpg';
 import MockImage2 from 'public/assets/images/mock_image_2.jpg'
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import PagBankService from "@src/app/api/PagBankService";
 
 
 const ImagesBuffet = () =>{
@@ -66,7 +67,10 @@ const ImagesBuffet = () =>{
   const [slug, setSlug] = useState<string>('')
   const [addressBuffet, setAddressBuffet] = useState<[]>([])
 
-  const [typeSignature, setTypeSignatue] = useState('')
+  const [typeSignature, setTypeSignature] = useState('')
+
+  
+  const [messageQtdImages, setMessageQtdImages] = useState('')
 
 
   const [isLoading1, setIsLoading1] = useState(false);
@@ -387,6 +391,7 @@ function createGalleryBuffet(id_image){
   useEffect(()=>{
     BuffetService.getImagesGallery(idBuffet)
     .then((response)=>{
+      console.log(response)
       setImagesBuffetDatabase(response);
       if(response[0]){
         setIdImageOne(response[0]?.arquivo?.id)
@@ -474,16 +479,38 @@ function createGalleryBuffet(id_image){
       }, 3000);
     };
 
-    if (messageFirstImage || messageSecondImage || messageThreeImage) {
+    if (messageFirstImage || messageSecondImage || messageThreeImage || messageQtdImages) {
       clearMessages();
     }
-  }, [messageFirstImage, messageSecondImage, messageThreeImage]);
+  }, [messageFirstImage, messageSecondImage, messageThreeImage, messageQtdImages]);
 
 
+
+  function getSignature(id){
+    PagBankService.getSignaturesPagBankById(id)
+    .then(res=>{
+      setTypeSignature(res?.plan?.name)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+
+
+  
+  useEffect(() => {
+    BuffetService.showSignaturesById(dataUser['entidade'].id)
+    .then(res=>{
+      let id = JSON.parse(res[0]?.tipo)
+      getSignature(id?.id)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }, []);
 
   useEffect(()=>{
     GetBuffetById();
-  }, [dataBuffet?.['id']])
+
+  }, [])
 
   
 
@@ -659,7 +686,9 @@ function createGalleryBuffet(id_image){
           }}
           startIcon={isLoading1 ? <CircularProgress size={20} color="inherit" /> : null}
         >
+          
           {isLoading1 ? <Text color={theme.colors.neutral.x000}>Salvando...</Text> : <Text  color={theme.colors.neutral.x000}>Salvar</Text>}
+      
         </Button>
             {messageFirstImage == 'Imagem cadastrada com sucesso.' && 
               <Text styleSheet={{color: 'green', fontSize: '.8rem', alignSelf:' center', padding: '1rem', height: '10px'}}>Imagem cadastrada com sucesso.</Text>
@@ -827,6 +856,7 @@ function createGalleryBuffet(id_image){
         >
    <Text  color={theme.colors.neutral.x000}>Remover imagens</Text>
         </Button>
+
     
     <Box styleSheet={{alignSelf: 'center', marginTop: '0rem'}}>
     {messageThreeImage == 'Imagens cadastradas com sucesso.' && 
@@ -857,9 +887,9 @@ function createGalleryBuffet(id_image){
           
       </Box>
     
-
-      
-      
+      {typeSignature == 'PLANO BASICO' && <Text styleSheet={{padding: '1rem 0', fontWeight: '500'}} color={theme.colors.neutral.x700}>Obs: Seu plano permite 8 imagens na galeria.</Text>}
+      {typeSignature == 'PLANO STANDARD' && <Text styleSheet={{padding: '1rem 0', fontWeight: '500'}} color={theme.colors.neutral.x700}>Obs: Seu plano permite 10 imagens na galeria.</Text>}
+      {typeSignature == 'PLANO PREMIUM' && <Text styleSheet={{padding: '1rem 0', fontWeight: '500'}} color={theme.colors.neutral.x700}>Obs: Seu plano permite 16 imagens na galeria.</Text>}
 
     </Box>
   )

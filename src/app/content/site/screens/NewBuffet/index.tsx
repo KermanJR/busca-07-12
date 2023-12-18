@@ -85,6 +85,7 @@ export default function NewBuffet() {
         id_perfil: 2
     };
 
+ 
     try{
       BuffetService.createUser(buffetData)
       .then(res => {
@@ -151,6 +152,8 @@ export default function NewBuffet() {
       setErrorDocument('Erro o verificar validade o documento.');
     }
   };
+
+  
 
   const formatDocument = (value) => {
     // Remove caracteres não numéricos

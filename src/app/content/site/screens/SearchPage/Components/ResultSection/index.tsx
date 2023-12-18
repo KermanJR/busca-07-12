@@ -40,7 +40,7 @@ export function ResultSection() {
     setCurrentPage(pageNumber);
   };
 
-  console.log(dataBuffet)
+
 
 
   

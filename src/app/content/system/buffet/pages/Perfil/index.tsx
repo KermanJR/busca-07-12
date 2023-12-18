@@ -335,7 +335,7 @@ const EditPerfil = () =>{
     setIsLoading(true);
     BuffetService.createBuffets({
       id_entidade: dataUser['entidade']?.id,
-      slug: slug,
+      slug: formatToSlug(dataUser['entidade']?.nome),
       capacidade_total: capacityTotalBuffet,
       area_total: areaTotal,
       sobre: aboutBuffet,
@@ -345,15 +345,15 @@ const EditPerfil = () =>{
       status: 'I',
       redes_sociais: [
         {
-            "descricao": urlInstagram ? urlInstagram : '',
+            "descricao": urlInstagram ? urlInstagram : 'none',
             "tipo": "instagram"
         },
         {
-          "descricao": urlFacebook ? urlFacebook : '',
+          "descricao": urlFacebook ? urlFacebook : 'none',
           "tipo": "facebook"
       },
       {
-        "descricao": urlSite ? urlSite : '',
+        "descricao": urlSite ? urlSite : 'none',
         "tipo": "site"
       }
       ]
@@ -375,6 +375,15 @@ const EditPerfil = () =>{
     setIsLoading(false);
   }
 
+  const formatToSlug = (input) => {
+    return input
+      .toLowerCase() // Converte para minúsculas
+      .replace(/\s+/g, '-') // Substitui espaços por hífens
+      .replace(/[^\w-]+/g, '') // Remove caracteres especiais
+      .replace(/--+/g, '-') // Substitui múltiplos hífens por um único hífen
+      .trim(); // Remove espaços em branco no início e no final
+  };
+
 
   //CRIAR CATEGORIAS DO BUFFET
 
@@ -383,7 +392,7 @@ const EditPerfil = () =>{
     e.preventDefault();
     setIsLoading(true);
     BuffetService.editBuffets(idBuffet, {
-      slug: slug,
+      slug: formatToSlug(dataUser['entidade']?.nome),
       capacidade_total: capacityTotalBuffet,
       area_total: areaTotal,
       sobre: aboutBuffet,
@@ -393,15 +402,15 @@ const EditPerfil = () =>{
       status: 'A',
       redes_sociais: [
         {
-            "descricao": urlInstagram ? urlInstagram : '',
+            "descricao": urlInstagram ? urlInstagram : 'none',
             "tipo": "instagram"
         },
         {
-          "descricao": urlFacebook ? urlFacebook : '',
+          "descricao": urlFacebook ? urlFacebook : 'none',
           "tipo": "facebook"
       },
       {
-        "descricao": urlSite ? urlSite : '',
+        "descricao": urlSite ? urlSite : 'none',
         "tipo": "site"
       }
       ]
@@ -683,6 +692,8 @@ const EditPerfil = () =>{
     }
   };
 
+  console.log(dataUser)
+
 
   return(
     <Box 
@@ -718,7 +729,14 @@ const EditPerfil = () =>{
             />
               
           </Box>
-        <InputDash placeholder="Digite a slug do Buffet" type="text" onChange={(e)=>setSlug(e)} value={slug} disabled={false} required={true}/>
+        <InputDash 
+          placeholder="Digite a slug do Buffet"
+          type="text"
+          value={formatToSlug(dataUser['entidade']?.nome)} 
+          disabled={true} 
+          required={true}
+          styleSheet={{backgroundColor: theme.colors.neutral.x200}}
+        />
        </Box>
      </Box>
 

@@ -61,8 +61,7 @@ const Homedash = () =>{
       setTotalUsers(result[3].total)
       setLoading(true)
 
-      console.log(viewPayments)
-
+    
     
       let totalYearPayments = 0
       let totalmonthPayments = 0
