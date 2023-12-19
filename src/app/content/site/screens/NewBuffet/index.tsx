@@ -9,7 +9,7 @@ import Input from "@src/app/theme/components/Input/Input";
 import Link from "@src/app/theme/components/Link/Link";
 import Text from "@src/app/theme/components/Text/Text";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import IconPassword from '../../../../../../public/assets/icons/password_svg.jpg'
 import IconUser from '../../../../../../public/assets/icons/user_svg.jpg'
 import IconEmail from '../../../../../../public/assets/icons/email_svg.jpg'
@@ -50,7 +50,8 @@ export default function NewBuffet() {
     setRememberMeToken,
     documento,
     password,
-    setDataUser
+    setDataUser,
+    setDataBuffet
   } = useContext(UserContext);
 
   
@@ -181,6 +182,10 @@ export default function NewBuffet() {
     // Remove todos os caracteres não numéricos
     return formattedCNPJ.replace(/\D/g, '');
   };
+
+  useEffect(()=>{
+    window?.localStorage?.setItem('ID_BUFFET', '')
+  }, [])
 
 
 

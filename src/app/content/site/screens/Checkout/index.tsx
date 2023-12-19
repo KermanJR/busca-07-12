@@ -96,6 +96,10 @@ export default function Checkout(){
       setDataBuffet,
       
     } = useContext(UserContext);
+    useEffect(()=>{
+      window?.localStorage?.setItem('ID_BUFFET', '')
+    }, [])
+  
 
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [messageErrorSignature, setMessageErrorSignature] = useState('');

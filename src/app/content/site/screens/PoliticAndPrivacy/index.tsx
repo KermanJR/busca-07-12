@@ -1,6 +1,6 @@
 import { useTheme } from "@src/app/theme/ThemeProvider";
 import Box from "@src/app/theme/components/Box/Box";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Text from "@src/app/theme/components/Text/Text";
 import BannerAnotherPages from '../../../../../../public/assets/images/banner_another_pages.webp';
 import ModalRegister from "../HomeScreen/Components/Modals/RegisterModal";
@@ -10,6 +10,7 @@ import useSize from "@src/app/theme/helpers/useSize";
 import useResponsive from "@src/app/theme/helpers/useResponsive";
 import ModalBudget from "../HomeScreen/Components/Modals/BudgetModal";
 import WhatsAppButton from "../HomeScreen/Components/WhatsappButton";
+import { UserContext } from "@src/app/context/UserContext";
 
 export default function PoliticAndPrivacy(){
 
@@ -23,6 +24,14 @@ export default function PoliticAndPrivacy(){
       closeBudgetModal,
       isModalOpenBudget
     } = useContext(ModalContext)
+ 
+
+    const {setDataBuffet} = useContext(UserContext)
+
+    useEffect(()=>{
+      setDataBuffet([])
+    }, [])
+    
 
     return(
         <Box tag="main"

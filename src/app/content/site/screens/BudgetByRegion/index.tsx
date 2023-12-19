@@ -32,15 +32,12 @@ export default function BudgetByRegion(){
   
   
   const {
-    isModalOpen,
-    closeModal,
     isNovoModalOpen,
     closeNovoModal,
     closeBudgetModal,
     isModalOpenBudget,
     isModalRecoveryPassword,
     closeRecoveryPassword,
-    openRecoveryPassword,
     openBudgetModal
   } = useContext(ModalContext)
 
@@ -76,19 +73,15 @@ export default function BudgetByRegion(){
     const [nome, setNome] = useState("");
     const [observacoes, setObservacoes] = useState("");
     const [qtdPessoas, setQtdPessoas] = useState(null);
-    const [tipo, setTipo] = useState("");
-    const [status, setStatus] = useState("");
-    const [idEntidade, setIdEntidade] = useState(null);
     const [periodo, setPeriodo] = useState("");
     const [idCidade, setIdCidade] = useState(null);
     const [bairro, setBairro] = useState("");
     const [dataDoEvento, setDataDoEvento] = useState("");
+
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showNegationModal, setShowNegationModal] = useState(false);
   
 
-    const [idCidadesBuffets, setIdCidadesBuffet] = useState([]);
-
-
-  
 
     const options = [
       {
@@ -110,30 +103,6 @@ export default function BudgetByRegion(){
     ]
 
     
-    const optionsTipo = [
-      {
-        value: '0',
-        label: 'Tipo de festa'
-      },
-      {
-        value: '1',
-        label: 'Infantil'
-      },
-      {
-        value: '2',
-        label: 'Domicílio'
-      },
-      {
-        value: '3',
-        label: 'Casamento'
-      },
-      {
-        value: '4',
-        label: 'Confraternização'
-      }
-    ]
-
-
     
       const [selectedCategories, setSelectedCategories] = useState<any>([]);
       const handleCategoryChange = (categoryValue) => {
@@ -145,9 +114,6 @@ export default function BudgetByRegion(){
       };
    
   
- 
-
-
     const handleStateChange = async (selectedOption?) => {
       setSelectedStateId(selectedOption);
       setLoadingCity(true)
@@ -173,8 +139,7 @@ export default function BudgetByRegion(){
 
 
       
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-    const [showNegationModal, setShowNegationModal] = useState(false);
+
     function ConfirmationModal() {
       return (
         <Box
@@ -200,7 +165,7 @@ export default function BudgetByRegion(){
 
        
 
-<Button
+        <Button
           onClick={(e)=>setShowConfirmationModal(!showConfirmationModal)}
           fullWidth={false}
           styleSheet={{
@@ -227,11 +192,13 @@ export default function BudgetByRegion(){
            {dataUser['entidade']?.nome}, orçamento enviado com sucesso!
          </Text>
          <Image src={Correct.src} alt="" styleSheet={{width: '70px', textAlign: 'center', alignSelf: 'center', marginTop: '-2rem'}}/>
-         </Box>
-          </Box>
-        
+        </Box>
+      </Box>
       );
     }
+
+
+
     function NegationModal() {
       return (
         <Box
@@ -255,9 +222,7 @@ export default function BudgetByRegion(){
             width: '50%'
           }}>
 
-              
-
-<Button
+        <Button
           onClick={(e)=>setShowNegationModal(!showNegationModal)}
           fullWidth={false}
           styleSheet={{
@@ -505,12 +470,13 @@ export default function BudgetByRegion(){
       }
     }, [])
 
+
     
-  
+  console.log(dataBuffet)
   
     return(
 
-      dataBuffet?.length > 1 ?
+      dataBuffet?.length > 1?
     
       
         <Box tag="main"
@@ -620,7 +586,6 @@ export default function BudgetByRegion(){
                     loading={loadingState}
                     value={states.find((state) => state.value === selectedStateId)}   
                     options={states} 
-            
                     styleSheet={{
                         padding: '.5rem',
                         borderRadius: '5px',

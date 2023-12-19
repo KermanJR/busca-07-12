@@ -53,7 +53,7 @@ export function ResultSection() {
     <Box tag="section" styleSheet={{marginTop: '2rem'}}>
 
       <Box styleSheet={{display: 'grid', gridTemplateColumns: !(size < 450) ? 'repeat(3, 33%)' : '100%', gap: '2rem'}}>
-        {dataBuffet?.slice((currentPage-1)*elementsPerPage, currentPage* elementsPerPage).map((result: any) => (
+        {dataBuffet ? dataBuffet?.slice((currentPage-1)*elementsPerPage, currentPage* elementsPerPage)?.map((result: any) => (
           <Box
           key={result?.['id']} 
           onClick={(e)=>handleChangeIdBuffet(result)}
@@ -227,7 +227,7 @@ export function ResultSection() {
           </Box>
         </Box>
       </Box>
-    ))}
+    )): ''}
   </Box>
       
       {dataBuffet.length === 0 && (

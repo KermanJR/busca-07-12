@@ -51,7 +51,8 @@ export default function LoginBuffet() {
     setDataUser,
     setIdPerfil,
     setRememberMeToken,
-    password
+    password,
+    setDataBuffet
   } = useContext(UserContext);
 
   const {
@@ -111,6 +112,11 @@ export default function LoginBuffet() {
       clearMessages();
     }
   }, [error, success]);
+
+  useEffect(()=>{
+    window?.localStorage?.setItem('ID_BUFFET', '')
+  }, [])
+
   
   return (
     <Box styleSheet={{display: 'flex', flexDirection: 'column', paddingTop: !(size < 910) ? '90px' : '60px'}}>
