@@ -36,6 +36,7 @@ const EditPerfil = () =>{
   const [categoriesBuffets, setCategoriesBuffets] = useState<[]>([]);
 
   const [categoriesBuffetsById, setCategoriesBuffetsById] = useState<[]>([]);
+  const [hoursBuffetsById, setHoursBuffetsById] = useState('');
 
   const [youtube, setYoutube] = useState('')
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,8 @@ const EditPerfil = () =>{
   const [auxServicesBuffets, setAuxServicesBuffet] = useState([]);
   const [auxSecurityBuffets, setAuxSecurityBuffet] = useState([]);
   const [auxCategoriesBuffets, setAuxCategoriesBuffet] = useState([]);
+  const [auxHoursBuffets, setAuxHoursBuffet] = useState('');
+  const [auxHoursWeekBuffets, setAuxHoursWeekBuffet] = useState('');
 
 
   const [detailsBuffet, setDetailsBuffet] = useState([]);
@@ -142,6 +145,7 @@ const EditPerfil = () =>{
 
   
 
+  /**************************************** */
 
   let selectedAttractivesBuffet = detailsBuffet
   .map((userAttraction) => {
@@ -156,6 +160,8 @@ const EditPerfil = () =>{
       : null;
   })
   .filter((attraction) => attraction !== null);
+
+  /**************************************** */
 
   let selectedSecurityBuffet = detailsBuffet
   .map((userAttraction) => {
@@ -172,6 +178,7 @@ const EditPerfil = () =>{
   .filter((attraction) => attraction !== null);
 
 
+  /**************************************** */
 
   let selectedServicesBuffet: any = detailsBuffet
   .map((userService) => {
@@ -187,6 +194,7 @@ const EditPerfil = () =>{
   })
   .filter((service) => service !== null); 
 
+  /**************************************** */
   let selectedCategoriesBuffet: any = categoriesBuffetsById
   .map((userService) => {
     const matchingService = categoriesBuffets.find(
@@ -200,6 +208,10 @@ const EditPerfil = () =>{
       : null; 
   })
   .filter((categoria) => categoria !== null); 
+
+  /**************************************** */
+
+
 
 
 
@@ -328,7 +340,6 @@ const EditPerfil = () =>{
 
 
 
-
   //CRIAR BUFFET
   function CreateBuffet(e: any){
     e.preventDefault();
@@ -339,8 +350,8 @@ const EditPerfil = () =>{
       capacidade_total: capacityTotalBuffet,
       area_total: areaTotal,
       sobre: aboutBuffet,
-      horario_atendimento: hoursWeek,
-      horario_atendimento_fds: hoursWeekend,
+      horario_atendimento: auxHoursWeekBuffets,
+      horario_atendimento_fds: auxHoursBuffets,
       youtube: youtube,
       status: 'I',
       redes_sociais: [
@@ -396,8 +407,8 @@ const EditPerfil = () =>{
       capacidade_total: capacityTotalBuffet,
       area_total: areaTotal,
       sobre: aboutBuffet,
-      horario_atendimento: hoursWeek,
-      horario_atendimento_fds: hoursWeekend,
+      horario_atendimento: auxHoursWeekBuffets,
+      horario_atendimento_fds: auxHoursBuffets,
       youtube: youtube,
       status: 'A',
       redes_sociais: [
@@ -433,7 +444,7 @@ const EditPerfil = () =>{
       }
     }).catch((error)=>{
       setMessage('Erro ao salvar dados, tente novamente');
-      console.log(error)
+    
     })
     setIsLoading(false);
   }
@@ -444,6 +455,7 @@ const EditPerfil = () =>{
     BuffetService.showBuffetByIdEntity(dataUser['entidade']?.id)
     .then((response) => {
       if(response?.id){
+     
         setModeBuffet('edit')
         setSlug(response?.slug)
         setAreaTotal(response?.area_total);
@@ -482,6 +494,8 @@ const EditPerfil = () =>{
       console.error('Erro ao buscar dados do Buffet:', error);
     });
   }
+
+  
 
 
   //RETORNA AS ATRAÇÕES FIXAS CADASTRADAS NO BANCO DE DADOS
@@ -561,7 +575,7 @@ const EditPerfil = () =>{
           }
         }
         setCategoriesBuffetsById(vetor);
-        console.log(vetor)
+    
       })
       .catch((error) => {
         console.error('Erro ao buscar categorias do Buffet:', error);
@@ -648,28 +662,6 @@ const EditPerfil = () =>{
   }, [cep?.length === 8])
 
   
-  
-  const EventActionPopup = () => (
-    <Box styleSheet={{ 
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '8px' ,
-      borderRadius: '4px',
-      padding: '8px',
-      width: '60%',
-      position: 'fixed',
-      right: 0,
-      top: '0',
-      backgroundColor: theme.colors.neutral.x000,
-      boxShadow: `0px 4px 4px 0px ${theme.colors.neutral.x050}`,
-      }}>
-        <Text variant="small" styleSheet={{width: '100%'}}>
-        slug é uma versão simplificada do seu título, usada na URL. 
-        Use letras minúsculas, hifens e números, evite espaços e caracteres especiais
-        </Text>
-     
-    </Box>
-  );
 
   const formatPhoneNumber = (input) => {
     // Remove todos os caracteres não numéricos
@@ -692,7 +684,8 @@ const EditPerfil = () =>{
     }
   };
 
-  console.log(dataUser)
+
+
 
 
   return(
@@ -797,13 +790,23 @@ const EditPerfil = () =>{
 
         <Box>
           <Text>Horário Atendimento</Text>
-          <InputDash placeholder="Atendimento: Seg à Sex" type="text" value={hoursWeek} onChange={setHoursWeek} required={true}/>
+
+          <SelectHours 
+          options={optionsHours} 
+          selectedHoursBuffet={hoursWeek}
+          setAuxHoursBuffet={setAuxHoursWeekBuffet}
+        />
+        
         </Box>
 
         <Box>
           <Text>Horário Atendimento (Fim de semana)</Text>
+          <SelectHours 
+          options={optionsHours} 
+          selectedHoursBuffet={hoursWeekend}
+          setAuxHoursBuffet={setAuxHoursBuffet}
+        />
         
-          <InputDash placeholder="Atendimento: Fim de semana" type="text" value={hoursWeekend} onChange={setHoursWeekend} required={true}/>
         </Box>
         <Box>
           <Text>Telefone</Text>

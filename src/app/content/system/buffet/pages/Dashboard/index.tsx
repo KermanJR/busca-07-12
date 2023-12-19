@@ -359,7 +359,7 @@ const Homedash = () =>{
             </Box>
           )}
 
-          {dadosAssinatura?.status == 'CANCELED' && statusBuffet === 'I' &&(
+          {dadosAssinatura?.status == 'CANCELED' && statusBuffet === 'I' || dadosAssinatura?.status == 'CANCELED' && statusBuffet === 'A'&&(
             <Box styleSheet={{width: '82%'}}>
             <Text variant="heading3Bold" tag="h3" color={theme.colors.neutral.x000}>Aviso</Text>
             <p style={{width: '90%', fontFamily: `'Poppins', 'sans-serif'`, color: "white"}}> 
