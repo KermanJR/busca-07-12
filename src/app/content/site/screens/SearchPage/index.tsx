@@ -33,6 +33,11 @@ export default function AdvertiseWithUsScreen(){
     closeRecoveryPassword,
     openRecoveryPassword
   } = useContext(ModalContext)
+  const {setDataBuffet} = useContext(UserContext)
+
+  useEffect(()=>{
+    window?.localStorage?.setItem('ID_BUFFET', '')
+  }, [])
 
 
   useEffect(()=>{

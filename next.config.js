@@ -23,23 +23,7 @@ const nextConfig = {
       },
     ];
   },
-  /*exportPathMap: async function () {
-    let buffetSlugs = await axios.get('https://buscabuffet.com.br/api/buffets')
-    .then(res=>{
-      return res
-    })
-    .catch(err=>{
-      return err9
-    })
 
-    const paths = buffetSlugs?.data.reduce((acc, slug) => {
-      acc[`/${slug?.slug}`] = { page: '/[buffetSlug]' };
-      return acc;
-    }, {});
-
-    return paths;
-
-  },*/
 
 
 
