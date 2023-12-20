@@ -127,15 +127,15 @@ const Notifications = () => {
      }}>
       <Icon  onClick={() => openModal(recentProposals)} name='notifications' styleSheet={{cursor: 'pointer', height: '30px', width: '30px', objectFit: 'contain', justifyContent: 'center', alignItems: 'center', marginTop: '1.2rem'}} />
       {newProposalsCount > 0 && (
-        <div  style={{ background: 'red', color: 'white', width: '20px',  borderRadius: '100px', position: 'relative', top: '-3.5rem', right: '-2rem', 
+        <Box  styleSheet={{ background: 'red', color: 'white', width: '20px',  borderRadius: '100px', position: 'relative', top: '-3.5rem', right: '-2rem', 
           textAlign: 'center'
         }}>
           {newProposalsCount}
-        </div>
+        </Box>
       )}
       {isModalOpen && selectedProposal && (
-  <div
-    style={{
+  <Box
+    styleSheet={{
       position: 'absolute',
       top: '0',
       left: '0',
@@ -225,7 +225,7 @@ const Notifications = () => {
 </Box>
 
 
-  </div>
+  </Box>
 )}
 
     </Box>

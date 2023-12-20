@@ -14,6 +14,7 @@ import ModalBudget from "../HomeScreen/Components/Modals/BudgetModal";
 import BuffetService from "@src/app/api/BuffetService";
 import ModalRecoveryPassword from "../HomeScreen/Components/Modals/RecoveryPassword";
 import WhatsAppButton from "../HomeScreen/Components/WhatsappButton";
+import { UserContext } from "@src/app/context/UserContext";
 
 export default function AdvertiseWithUsScreen(){
 
@@ -32,6 +33,11 @@ export default function AdvertiseWithUsScreen(){
     closeRecoveryPassword,
     openRecoveryPassword
   } = useContext(ModalContext)
+
+
+  useEffect(()=>{
+    window?.localStorage?.setItem('ID_BUFFET', '')
+  }, [])
 
   
   

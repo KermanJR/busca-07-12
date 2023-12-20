@@ -16,6 +16,7 @@ import Image from "@src/app/theme/components/Image/Image";
 import Logo from '../../../../../../public/assets/logo_buffet.svg'
 import ModalRecoveryPassword from "../HomeScreen/Components/Modals/RecoveryPassword";
 import WhatsAppButton from "../HomeScreen/Components/WhatsappButton";
+import { UserContext } from "@src/app/context/UserContext";
 export default function Contact(){
 
     const isMobile = useResponsive()
@@ -33,6 +34,13 @@ export default function Contact(){
       closeRecoveryPassword,
       openRecoveryPassword
     } = useContext(ModalContext)
+
+    const {setDataBuffet} = useContext(UserContext)
+
+    useEffect(()=>{
+      window?.localStorage?.setItem('ID_BUFFET', '')
+    }, [])
+  
   
     return(
         <Box tag="main"

@@ -824,16 +824,16 @@ const EditPerfil = () =>{
 
         <Box>
           <Text>Instagram</Text>
-          <InputDash placeholder="instagram.com/seuperfil" type="text" value={urlInstagram}  onChange={(e) => setUrlInstagram(e)} />
+          <InputDash placeholder="instagram.com/seuperfil" type="text" value={urlInstagram == 'none'? '': urlInstagram}  onChange={(e) => setUrlInstagram(e)} />
         </Box>
 
         <Box>
           <Text>Facebook</Text>
-          <InputDash placeholder="facebook.com/seuperfil" type="text" value={urlFacebook}  onChange={(e) => setUrlFacebook(e)} />
+          <InputDash placeholder="facebook.com/seuperfil" type="text" value={urlFacebook  == 'none'? '': urlFacebook}  onChange={(e) => setUrlFacebook(e)} />
         </Box>
         <Box>
           <Text>URL Site</Text>
-          <InputDash placeholder="www.seusite.com.br" type="text" value={urlSite}  onChange={(e) => setUrlSite(e)} />
+          <InputDash placeholder="www.seusite.com.br" type="text" value={urlSite  == 'none'? '': urlSite}  onChange={(e) => setUrlSite(e)} />
         </Box>
      </Box>
 

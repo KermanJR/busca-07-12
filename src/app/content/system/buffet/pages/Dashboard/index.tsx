@@ -227,15 +227,17 @@ const Homedash = () =>{
   function getSignature(id){
     PagBankService.getSignaturesPagBankById(id)
     .then(res=>{
-      console.log(res)
+      //console.log(res)
       setDadosAssinatura(res)
     }).catch(err=>{
       console.log(err)
     })
+
   }
 
 
 
+  console.log(currentPropostas)
 
   return(
     <Box styleSheet={{height: 'auto'}}>
@@ -297,7 +299,7 @@ const Homedash = () =>{
                 diasRestantes
                 ) : (
                 <p> Não perca a oportunidade de continuar desfrutando de todos os benefícios! 
-                  Assine em <label style={{display: 'inline-block'}}><a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
+                  Assine em <label style={{display: 'inline-block'}}><a href="https://buscabuffet.com.br/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
                 </p>
                 )
               ) : (
@@ -305,7 +307,7 @@ const Homedash = () =>{
               )}
                </label> dias para continuar aproveitando sua avaliação gratuita.
               Não perca a oportunidade de continuar desfrutando de todos os benefícios! 
-              Assine em <label style={{display: 'inline-block'}}><a href="http://localhost:3000/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
+              Assine em <label style={{display: 'inline-block'}}><a href="https://buscabuffet.com.br/planos" style={{color: theme.colors.primary.x500, fontWeight: '600'}}>buscabuffet.com.br/planos</a></label>
             </p>
           </Box>
           )}

@@ -22,6 +22,7 @@ import ModalBudget from "./Components/Modals/BudgetModal";
 import { useRouter } from "next/router";
 import ModalRecoveryPassword from "./Components/Modals/RecoveryPassword";
 import WhatsAppButton from "./Components/WhatsappButton";
+import { UserContext } from "@src/app/context/UserContext";
 
 export default function HomeScreen(){
 
@@ -37,12 +38,19 @@ export default function HomeScreen(){
     isModalOpenBudget,
     isModalRecoveryPassword,
     closeRecoveryPassword,
-    openRecoveryPassword
+    openRecoveryPassword,
+    
   } = useContext(ModalContext)
+
+  const {
+    setDataBuffet
+    
+  } = useContext(UserContext)
 
   const router = useRouter();
 
   useEffect(() => {
+   
     const scrollToSection = () => {
       const section = document.getElementById('como-funciona');
       if (section) {
@@ -56,6 +64,11 @@ export default function HomeScreen(){
       scrollToSection();
     }
   }, [router.asPath]);
+
+  useEffect(()=>{
+    window?.localStorage?.setItem('ID_BUFFET', '')
+  }, [])
+
 
   return(
     <Box
@@ -276,7 +289,7 @@ export default function HomeScreen(){
 
 
 
-      <Box styleSheet={{width: '100%', height: 'auto', marginTop: '4rem'}}>
+      <Box styleSheet={{width: '100%', height: 'auto', marginTop: '5rem'}}>
           <Box styleSheet={{
               width: !isMobile ? '70%' : '90%',
               height: 'auto',

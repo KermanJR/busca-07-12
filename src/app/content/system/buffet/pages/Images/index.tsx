@@ -138,7 +138,6 @@ const ImagesBuffet = () =>{
 
   //Remover Imagens
   const removeImage = (index) => {
-    console.log(index)
     const newImages = [...selectedImageThree];
   
     // Encontre o índice da imagem no array
@@ -175,7 +174,6 @@ const ImagesBuffet = () =>{
 async function PostFirstImageBuffetOne() {
   setIsLoading1(true)
   if(selectedImageOne){
-
     BuffetService.postFileBuffetImageOne({
       selectedImageOne,
       tipo: "capa"
@@ -209,7 +207,6 @@ async function PostFirstImageBuffetOne() {
 
 async function PostFirstImageBuffetTwo() {
   setIsLoading2(true)
-
   if(selectedImageTwo){
     BuffetService.postFileBuffetImageTwo({
       selectedImageTwo,
@@ -245,32 +242,42 @@ async function PostFirstImageBuffetTwo() {
 async function PostFirstImageBuffetThree() {
   setIsLoading3(true)
   if(selectedImageThree?.length > 0){
-    selectedImageThree.forEach((imageFile) => {
-      BuffetService.postFileBuffetImageThree({
-        imageFile,
-        tipo: "galeria"
-      })
-        .then(async (response) => {
-  
-          const imageUrl = await loadImagePreview(imageFile);
-          setModeGalleryImage('edit')
-          setIdImageThree([...idImageThree, await response?.id])
-          createGalleryBuffet(await response?.id)
-          setMessageThreeImage('Imagens cadastradas com sucesso.')
-          setMessageFirstImage('')
-          setMessageSecondImage('')
-          
+    if(typeSignature == 'PLANO STANDARD' && selectedImageThree?.length > 10){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }
+    if(typeSignature == 'PLANO PREMIUM' && selectedImageThree?.length > 16){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }else if(typeSignature == 'PLANO BASICO' && selectedImageThree?.length > 8){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }else{
+      selectedImageThree.forEach((imageFile) => {
+        BuffetService.postFileBuffetImageThree({
+          imageFile,
+          tipo: "galeria"
         })
-        .catch((error) => {
-          setMessageThreeImage('Erro no cadastro das imagens.')
-        });
-    });
+          .then(async (response) => {
+            const imageUrl = await loadImagePreview(imageFile);
+            setModeGalleryImage('edit')
+            setIdImageThree([...idImageThree, await response?.id])
+            createGalleryBuffet(await response?.id)
+            setMessageThreeImage('Imagens cadastradas com sucesso.')
+            setMessageFirstImage('')
+            setMessageSecondImage('')
+            
+          })
+          .catch((error) => {
+            setMessageThreeImage('Erro no cadastro das imagens.')
+          });
+      });
+    }
+    
   }else if(selectedImageThree?.length == 0){
     setMessageThreeImage('Por favor, selecione uma imagem.')
   }
-   setTimeout(()=>{
+  
+  setTimeout(()=>{
     setIsLoading3(false)
-  }, 1000)
+  }, 1000);
   
 }
 
@@ -330,22 +337,39 @@ async function EditFirstImageBuffetTwo() {
   
 }
 
+console.log(selectedImageThree)
+
 async function EditFirstImageBuffetThree() {
   setIsLoading3(true)
   if(selectedImageThree?.length > 0){
-    selectedImageThree.forEach((imageFile) => {
-      BuffetService.editFileBuffet(imageFile, imageFile?.id_arquivo)
-        .then(async (response) => {
-          idImagesGallery.push(await response?.id)
-          setMessageThreeImage('Imagens editadas com sucesso.')
-          setMessageFirstImage('')
-          setMessageSecondImage('')
+    if(typeSignature == 'PLANO STANDARD' && selectedImageThree?.length > 10){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }
+    if(typeSignature == 'PLANO PREMIUM' && selectedImageThree?.length > 16){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }else if(typeSignature == 'PLANO BASICO' && selectedImageThree?.length > 8){
+      setMessageThreeImage('Por favor, remova alguma imagem.')
+    }else{
+      selectedImageThree.forEach((imageFile) => {
+        console.log(imageFile)
+        BuffetService.postFileBuffetImageThree({
+          imageFile: imageFile,
+          tipo: "galeria"
         })
-        .catch((error) => {
-          setMessageFirstImage('Falha ao editar imagens.')
-          console.error('Erro ao editar imagens da galeria:', error);
-        });
-    });
+          .then(async (response) => {
+            idImagesGallery.push(await response?.id)
+            createGalleryBuffet(response?.id)
+            setMessageThreeImage('Imagens editadas com sucesso.')
+            setMessageFirstImage('')
+            setMessageSecondImage('')
+          })
+          .catch((error) => {
+            setMessageFirstImage('Falha ao editar imagens.')
+            console.error('Erro ao editar imagens da galeria:', error);
+          });
+      });
+    }
+    
   }else if(selectedImageThree?.length == 0){
     setMessageThreeImage('Por favor, selecione uma imagem.')
   }
@@ -494,6 +518,8 @@ function createGalleryBuffet(id_image){
       console.log(err)
     })
   }
+
+
 
 
   
@@ -881,6 +907,10 @@ function createGalleryBuffet(id_image){
               Por favor, primeiro selecione a foto de capa e perfil do buffet.</Text>
             }
 
+            {messageThreeImage == 'Por favor, remova alguma imagem.' && 
+              <Text styleSheet={{color: 'red', fontSize: '.8rem', alignSelf:' center', padding: '1rem', height: '10px'}}>
+              Você excedeu o limite de imagens permitidas do seu plano.</Text>
+            }
 
     </Box>
       

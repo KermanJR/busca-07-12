@@ -32,7 +32,6 @@ export function FilterSection() {
   const {
     setDataBuffet,
     selectedCity,
-    dataBuffet,
     setSelectedCategory,
     selectedState,
     selectedCategory
@@ -59,74 +58,59 @@ export function FilterSection() {
   
 
 
-  console.log(dataBuffet)
+  useEffect(() => {
+    if(!selectedCategory){
+      BuffetService.showBuffets()
+      .then(res=>{
+        const statusFiltro = 'A';
+        const filteredBuffets = res.filter((buffet) => {
+          const categoriaFiltro = buffet?.categorias.map((categoria) => categoria.categoria?.nome) || [];
+          const cidadeBuffet = buffet?.entidade?.enderecos[0]?.endereco?.cidade?.nome;
+          const estadoBuffet = buffet?.entidade?.enderecos[0]?.endereco?.cidade?.estado?.nome;
+  
+          //let categoriaPassaFiltro = !filter || categoriaFiltro === filter;
+          let categoriaPassaFiltro = !filter || categoriaFiltro.some((categoriaBuffet) => filter.includes(categoriaBuffet));
+          let cidadePassaFiltro = !selectedCity || cidadeBuffet === selectedCity;
+          let estadoPassaFiltro = !selectedState || estadoBuffet === selectedState;
+       
+          return categoriaPassaFiltro && cidadePassaFiltro && estadoPassaFiltro;
+      });
 
-
-
-
-useEffect(() => {
-  BuffetService.showBuffets().then((res) => {
-    console.log(res);
-
-    // Filtrar buffets com base no campo "status"
-    const statusFiltro = 'A';
-    const buffetsAtivos = res.filter(
-      (buffet) =>
-        buffet.status === statusFiltro &&
-        (buffet?.entidade?.assinaturas[0]?.status === 'TRIAL' ||
-          buffet?.entidade?.assinaturas[0]?.status === 'ACTIVE')
+      const buffetsAtivos = filteredBuffets.filter(
+        (buffet) =>
+          buffet.status === statusFiltro &&
+          (buffet?.entidade?.assinaturas[0]?.status === 'TRIAL' ||
+            buffet?.entidade?.assinaturas[0]?.status === 'ACTIVE')
+      );
+  
+      const premiumBuffets = buffetsAtivos.filter(
+        (buffet) =>
+            buffet?.entidade?.assinaturas[0]?.plano?.nome === "Premium"
     );
-
-    // Separe os buffets "Premium" e outros
-    const premiumBuffets = buffetsAtivos.filter(
-      (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome === 'Premium'
-    );
-
-    // Filtrar buffets com perfil destacado
-    const destacadoPremiunsBuffets = premiumBuffets.filter((buffet) =>
-      buffet?.entidade?.destacado === '1'
-    );
-
-    // Filtrar buffets que não são "Premium"
+  
     const otherBuffets = buffetsAtivos.filter(
-      (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
+        (buffet) =>
+            buffet?.entidade?.assinaturas[0]?.plano?.nome !== "Premium"
     );
+  
+    premiumBuffets.sort((a, b) => {
+        return a.entidade.nome.localeCompare(b.entidade.nome);
+    });
+  
+    const sortedBuffets: any = [...premiumBuffets, ...otherBuffets];
+    console.log(sortedBuffets)
 
-    // Classificar buffets "Premium" por nome
-    premiumBuffets.sort((a, b) =>
-      a?.entidade?.assinaturas[0]?.plano?.nome === 'Premium' &&
-      b?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
-        ? -1
-        : a?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium' &&
-          b?.entidade?.assinaturas[0]?.plano?.nome === 'Premium'
-        ? 1
-        : 0
-    );
-
-    // Classificar buffets por destaque
-    destacadoPremiunsBuffets.sort((a, b) =>
-      a?.entidade?.destacado === '1' && b?.entidade?.destacado !== '1'
-        ? -1
-        : a?.entidade?.destacado !== '1' && b?.entidade?.destacado === '1'
-        ? 1
-        : 0
-    );
-
-    // Classificar buffets por nome da entidade
-    otherBuffets.sort((a, b) =>
-      a.entidade.nome.localeCompare(b.entidade.nome)
-    );
-
-    const sortedBuffets: any = [
-      ...premiumBuffets,
-      ...destacadoPremiunsBuffets,
-      ...otherBuffets
-    ];
-
-    console.log(sortedBuffets);
     setDataBuffet(sortedBuffets);
-  });
-}, []);  // array de dependências vazio para garantir execução única
+      })
+    }
+   
+
+}, [filter, selectedCity ,selectedState]);
+  
+
+
+
+
 
 
 
@@ -135,64 +119,67 @@ useEffect(() => {
 useEffect(() => {
   if (selectedCategory && !selectedCity) {
     BuffetService.showBuffets().then((res) => {
-      console.log(res);
-      // Filtrar buffets com base no campo "status"
-    const statusFiltro = 'A';
-    const buffetsAtivos = res.filter(
-      (buffet) =>
-        buffet.status === statusFiltro &&
-        (buffet?.entidade?.assinaturas[0]?.status === 'TRIAL' ||
-          buffet?.entidade?.assinaturas[0]?.status === 'ACTIVE')
-    );
+      console.log(res)
+      const filteredBuffets = res.filter((buffet) => {
+        const categoriaFiltro = buffet?.categorias.map((categoria) => categoria.categoria?.nome) || [];
+        let categoriaPassaFiltro = selectedCategory?.length === 0 || categoriaFiltro.some((categoriaBuffet) => selectedCategory.includes(categoriaBuffet));
 
-    // Separe os buffets "Premium" e outros
-    const premiumBuffets = buffetsAtivos.filter(
-      (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome === 'Premium'
-    );
 
-    // Filtrar buffets com perfil destacado
-    const destacadoPremiunsBuffets = premiumBuffets.filter((buffet) =>
-      buffet?.entidade?.destacado === '1'
-    );
+        return categoriaPassaFiltro;
+      });
 
-    // Filtrar buffets que não são "Premium"
-    const otherBuffets = buffetsAtivos.filter(
-      (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
-    );
 
-    // Classificar buffets "Premium" por nome
-    premiumBuffets.sort((a, b) =>
-      a?.entidade?.assinaturas[0]?.plano?.nome === 'Premium' &&
-      b?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
-        ? -1
-        : a?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium' &&
+      const statusFiltro = 'A'; // Altere isso para o status desejado (por exemplo, 'A' para ativo)
+      const buffetsAtivos = filteredBuffets.filter((buffet) => buffet.status === statusFiltro &&
+        buffet?.entidade?.assinaturas[0]?.status === "ACTIVE")
+
+      const premiumBuffets = buffetsAtivos.filter(
+        (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome === 'Premium'
+      );
+
+      const destacadoPremiunsBuffets = premiumBuffets.filter((buffet) => {
+        return buffet?.entidade?.destacado === '1';
+      });
+
+      const otherBuffets = buffetsAtivos.filter(
+        (buffet) => buffet?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
+      );
+
+      premiumBuffets.sort((a, b) => {
+        return a.entidade.nome.localeCompare(b.entidade.nome);
+      });
+
+      const sortedBuffets: any = [
+        ...destacadoPremiunsBuffets,
+        ...premiumBuffets,
+        ...otherBuffets,
+      ];
+
+      sortedBuffets.sort((a, b) => {
+        if (
+          a?.entidade?.assinaturas[0]?.plano?.nome === 'Premium' &&
+          b?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium'
+        ) {
+          return -1;
+        } else if (
+          a?.entidade?.assinaturas[0]?.plano?.nome !== 'Premium' &&
           b?.entidade?.assinaturas[0]?.plano?.nome === 'Premium'
-        ? 1
-        : 0
-    );
+        ) {
+          return 1;
+        }
 
-    // Classificar buffets por destaque
-    destacadoPremiunsBuffets.sort((a, b) =>
-      a?.entidade?.destacado === '1' && b?.entidade?.destacado !== '1'
-        ? -1
-        : a?.entidade?.destacado !== '1' && b?.entidade?.destacado === '1'
-        ? 1
-        : 0
-    );
+        if (a?.entidade?.destacado === '1' && b?.entidade?.destacado !== '1') {
+          return -1;
+        } else if (a?.entidade?.destacado !== '1' && b?.entidade?.destacado === '1') {
+          return 1;
+        }
 
-    // Classificar buffets por nome da entidade
-    otherBuffets.sort((a, b) =>
-      a.entidade.nome.localeCompare(b.entidade.nome)
-    );
+        return a.entidade.nome.localeCompare(b.entidade.nome);
+      });
 
-    const sortedBuffets: any = [
-      ...premiumBuffets,
-      ...destacadoPremiunsBuffets,
-      ...otherBuffets
-    ];
-
-    console.log(sortedBuffets);
-    setDataBuffet(sortedBuffets);
+      console.log(sortedBuffets)
+      setDataBuffet(sortedBuffets);
+      setSelectedCategory(null);
     });
   }
 }, [selectedCategory]);
@@ -201,7 +188,7 @@ useEffect(() => {
 useEffect(() => {
   if (selectedCategory && selectedCity) {
     BuffetService.showBuffets().then((res) => {
-      console.log(res);
+      console.log(res)
       const filteredBuffets = res.filter((buffet) => {
         const categoriaFiltro = buffet?.categorias.map((categoria) => categoria.categoria?.nome) || [];
         const cidadeBuffet = buffet?.entidade?.enderecos[0]?.endereco?.cidade?.nome;
@@ -235,6 +222,7 @@ useEffect(() => {
 
       const sortedBuffets: any = [...destacadoPremiunsBuffets, ...premiumBuffets, ...otherBuffets];
 
+      console.log(sortedBuffets)
       setDataBuffet(sortedBuffets);
     });
   }
@@ -245,7 +233,7 @@ useEffect(() => {
 useEffect(() => {
   if (selectedCity && !selectedCategory) {
     BuffetService.showBuffets().then((res) => {
-      console.log(res);
+      console.log(res)
       const filteredBuffets = res.filter((buffet) => {
         const cidadeBuffet = buffet?.entidade?.enderecos[0]?.endereco?.cidade?.nome;
         let cidadePassaFiltro = !selectedCity || cidadeBuffet === selectedCity;
@@ -275,6 +263,7 @@ useEffect(() => {
 
       const sortedBuffets: any = [...destacadoPremiunsBuffets, ...premiumBuffets, ...otherBuffets];
 
+      console.log(sortedBuffets)
       setDataBuffet(sortedBuffets);
     });
   }
@@ -301,11 +290,6 @@ useEffect(() => {
       setCities(res)
     })
   }, [filterState])
-
-  function clearFilters(){
-    setFilterState(null) 
-    setFilter('')
-  }
 
 
  
@@ -431,28 +415,14 @@ useEffect(() => {
           {renderCheckBoxes(typesOfParty2, 'filterParty')}
       
       </Box>
-     
+      <Button onClick={(e)=>setFilter('')}  styleSheet={{width: '100%', alignSelf: 'center', borderRadius: '6px', marginTop: '.5rem'}} variant='outlined' textVariant='body1'>Limpar</Button>
 
-      <Box styleSheet={{backgroundColor: theme.colors.neutral.x050, padding: !(size < 350) ? '1rem' : '5px', borderRadius: '6px', marginTop: '1rem', gridArea: !(size <= 650) ? '' : 'filter2'}}>
+      <Box styleSheet={{backgroundColor: theme.colors.neutral.x050, padding: !(size < 350) ? '1rem' : '5px', borderRadius: '6px', marginTop: '3rem', gridArea: !(size <= 650) ? '' : 'filter2'}}>
           <Text variant='heading5semiBold' styleSheet={!(size <= 650) ? {} : {fontSize: (!(size < 350) ? '0.9rem' : '0.7rem')}}>Por Estado</Text>
           {renderCheckBoxes(states, 'filterState')}
           
       </Box>
-      <Button 
-        onClick={clearFilters} 
-        styleSheet={{
-          width: '100%',
-          alignSelf: 'center',
-          position: 'relative',
-          top: !(size < 400) ? '' : '2.2rem',
-          borderRadius: '6px',
-          marginTop: '.5rem'
-        }}
-        variant='outlined'
-        textVariant='body1'
-      >
-        Nova Pesquisa
-      </Button>
+      <Button onClick={(e)=>setFilterState(null)} styleSheet={{width: '100%', alignSelf: 'center', position: 'relative', top: !(size < 400) ? '' : '2.2rem', borderRadius: '6px', marginTop: '.5rem'}} variant='outlined' textVariant='body1'>Limpar</Button>
     </Box>
   );
 }

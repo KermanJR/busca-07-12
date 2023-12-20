@@ -229,6 +229,9 @@ select, options{
   opacity: 0.25;
   color: #0d006d;
 }
+react-multi-carousel-list{
+  padding-bottom: 1rem: 
+}
 
 @media (width > 768px){
 
@@ -238,6 +241,8 @@ select, options{
     top: -6rem;
 
 }
+
+
 }
 
 `

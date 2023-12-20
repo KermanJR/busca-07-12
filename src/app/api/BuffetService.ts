@@ -863,7 +863,7 @@ export default class BuffetService {
    
     const formData = new FormData();
     formData.append('nome', data?.selectedImageOne?.name);
-    formData.append('tipo', data?.tipo);
+    formData.append('tipo', "capa");
     formData.append('anexo', data?.selectedImageOne);
 
     try {
@@ -911,7 +911,7 @@ export default class BuffetService {
     
     const formData = new FormData();
     formData.append('nome', data?.selectedImageTwo?.name);
-    formData.append('tipo', data?.tipo);
+    formData.append('tipo', "card");
     formData.append('anexo', data?.selectedImageTwo);
 
     try {
@@ -936,7 +936,7 @@ export default class BuffetService {
 
     const formData = new FormData();
     formData.append('nome', data?.imageFile?.name);
-    formData.append('tipo', data?.tipo);
+    formData.append('tipo', "galeria");
     formData.append('anexo', data?.imageFile);
 
     try {

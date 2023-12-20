@@ -33,6 +33,9 @@ export default function AboutUs(){
       closeRecoveryPassword,
       openRecoveryPassword
     } = useContext(ModalContext)
+    useEffect(()=>{
+      window?.localStorage?.setItem('ID_BUFFET', '')
+    }, [])
   
     return(
         <Box tag="main"
